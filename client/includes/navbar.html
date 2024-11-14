@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSJMC Alumni Navbar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'navy': '#0c133b',
+            'button-red': 'rgb(174, 106, 106)',
+            'button-red-hover': 'rgb(150, 90, 90)',
+            'antique-white': '#FAEBD7'
+          },
+          fontFamily: {
+            'montserrat': ['Montserrat', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-montserrat bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-navy py-3 px-6 shadow-lg">
+    <div class="container mx-auto flex flex-wrap items-center justify-between">
+      <a href="/" class="flex items-center">
+        <img src="https://ccsaalumni.in/static/media/du.ac81f37e7c52c0eb3d53.png" alt="DU Logo" class="w-12 h-12 rounded-full mr-3">
+        <span class="text-xl text-antique-white font-bold">CSJMC Alumni</span>
+      </a>
+      <button id="navbar-toggle" class="lg:hidden text-antique-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+      <div id="navbar-menu" class="hidden lg:flex lg:items-center w-full lg:w-auto mt-4 lg:mt-0">
+        <ul class="flex flex-col lg:flex-row lg:ml-auto">
+          <li><a href="/" class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Home</a></li>
+          <li><a href="../alumni.html" class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Alumni</a></li>
+          <li><a href="../about.html" class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">About</a></li>
+          <li><a href="../news-events.html" class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">News and Events</a></li>
+          <li><a href="../alumni-form.html" class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Alumni Form</a></li>
+          <li><a href="../profile.html" class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Profile</a></li>
+        </ul>
+        <button id="auth-button" class="mt-4 lg:mt-0 lg:ml-4 bg-button-red text-antique-white px-6 py-2 rounded-full transition duration-300 ease-in-out hover:bg-button-red-hover">Join us</button>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    // Toggle mobile menu
+    document.getElementById('navbar-toggle').addEventListener('click', function() {
+      document.getElementById('navbar-menu').classList.toggle('hidden');
+    });
+
+    // Set active link
+    function setActiveLink(link) {
+      document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active', 'text-yellow-300', 'bg-blue-600', 'font-semibold'));
+      link.classList.add('active', 'text-yellow-300', 'bg-blue-600', 'font-semibold');
+    }
+
+    // Add click event listeners to nav links
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(event) {
+        event.preventDefault();
+        setActiveLink(this);
+        const href = this.getAttribute('href');
+        if (href) window.location.href = href;
+      });
+    });
+
+    // Toggle auth button
+    document.getElementById('auth-button').addEventListener('click', function() {
+      this.textContent = this.textContent.trim() === 'Join us' ? 'Log Out' : 'Join us';
+    });
+  </script>
+
+</body>
+</html>

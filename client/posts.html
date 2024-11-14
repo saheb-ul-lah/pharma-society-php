@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Posts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    </style>
+
+
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'button-red': 'rgb(174, 106, 106)',
+                        'button-red-hover': 'rgb(150, 90, 90)',
+                        'navy': '#0c133b',
+                        'button-red': 'rgb(174, 106, 106)',
+                        'button-red-hover': 'rgb(150, 90, 90)',
+                        'antique-white': '#FAEBD7'
+                    },
+                    fontFamily: {
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: montserrat;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <nav class="sticky top-0 z-50 bg-navy py-3 px-6 shadow-lg">
+        <div class="container mx-auto flex flex-wrap items-center justify-between">
+            <a href="./index.html" class="flex items-center">
+                <img src="https://ccsaalumni.in/static/media/du.ac81f37e7c52c0eb3d53.png" alt="DU Logo"
+                    class="w-12 h-12 rounded-full mr-3">
+                <span class="text-xl text-antique-white font-bold">CSJMC Alumni</span>
+            </a>
+            <button id="navbar-toggle" class="lg:hidden text-antique-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+            <div id="navbar-menu" class="hidden lg:flex lg:items-center w-full lg:w-auto mt-4 lg:mt-0">
+                <ul class="flex flex-col lg:flex-row lg:ml-auto">
+                    <li><a href="./index.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Home</a>
+                    </li>
+                    <li><a href="./alumni.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Alumni</a>
+                    </li>
+                    <li><a href="./student.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Students</a>
+                    </li>
+                    <li><a href="./about.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">About</a>
+                    </li>
+                    <li><a href="./news-events.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">News
+                            and Events</a></li>
+                    <li><a href="./alumni-form.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Alumni
+                            Form</a></li>
+                    <li><a href="./student-form.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Student
+                            Form</a></li>
+                    <li><a href="./posts.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Posts</a>
+                    </li>
+                    <li><a href="./profile.html"
+                            class="nav-link text-antique-white px-4 py-2 mx-1 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Profile</a>
+                    </li>
+                </ul>
+                <button id="auth-button"
+                    class="mt-4 lg:mt-0 lg:ml-4 bg-button-red text-antique-white px-6 py-2 rounded-full transition duration-300 ease-in-out hover:bg-button-red-hover">Join
+                    us</button>
+            </div>
+        </div>
+    </nav>
+    <div id="posts-container" class="m-5 rounded-2xl bg-gray-50 shadow-lg p-5 relative min-h-screen">
+        <div id="posts-header" class="flex justify-between mb-5 gap-2">
+            <button id="alumni-tab"
+                class="flex-1 text-center py-3 cursor-pointer font-medium text-gray-700 transition-all duration-300 ease-in-out rounded-lg bg-gray-200 hover:bg-gray-300 active:scale-95">
+                Alumni Posts
+            </button>
+            <button id="student-tab"
+                class="flex-1 text-center py-3 cursor-pointer font-medium text-gray-700 transition-all duration-300 ease-in-out rounded-lg bg-gray-200 hover:bg-gray-300 active:scale-95">
+                Student Queries
+            </button>
+        </div>
+        <div id="posts-content" class="p-5">
+            <!-- Content will be dynamically inserted here -->
+        </div>
+        <button id="create-button"
+            class="fixed bottom-8 right-8 bg-blue-500 text-white border-none rounded-full px-6 py-3 text-lg cursor-pointer flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-blue-600 active:scale-95">
+            <i class="fas fa-pen mr-2"></i>
+            <span>Create your post</span>
+        </button>
+    </div>
+
+    <div id="create-form-overlay"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-8 rounded-2xl w-4/5 max-w-2xl shadow-2xl">
+            <h2 id="form-title" class="text-2xl font-bold mb-4">Create a New Post</h2>
+            <form id="create-form">
+                <input type="text" id="post-title" placeholder="Title"
+                    class="w-full p-2 mb-4 rounded border border-gray-300 text-lg" required>
+                <textarea id="post-content" placeholder="Content"
+                    class="w-full p-2 mb-4 rounded border border-gray-300 text-lg min-h-[150px] resize-vertical"
+                    required></textarea>
+                <div class="flex justify-end gap-2">
+                    <button type="submit"
+                        class="bg-blue-500 text-white border-none rounded px-5 py-2 cursor-pointer text-lg transition-colors duration-300 hover:bg-blue-600">Post</button>
+                    <button type="button" id="cancel-button"
+                        class="bg-red-500 text-white border-none rounded px-5 py-2 cursor-pointer text-lg transition-colors duration-300 hover:bg-red-600">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const postsContainer = document.getElementById('posts-container');
+        const postsContent = document.getElementById('posts-content');
+        const alumniTab = document.getElementById('alumni-tab');
+        const studentTab = document.getElementById('student-tab');
+        const createButton = document.getElementById('create-button');
+        const createFormOverlay = document.getElementById('create-form-overlay');
+        const createForm = document.getElementById('create-form');
+        const cancelButton = document.getElementById('cancel-button');
+        const formTitle = document.getElementById('form-title');
+        const postTitleInput = document.getElementById('post-title');
+        const postContentInput = document.getElementById('post-content');
+
+        let activeTab = 'alumni';
+        let posts = [
+            { id: 1, author: 'John Doe', timestamp: '2 hours ago', title: 'My Alumni Experience', content: 'It was great!', likes: 5, comments: 3 },
+            { id: 2, author: 'Jane Smith', timestamp: '1 day ago', title: 'Career Advice', content: 'Here are some tips...', likes: 10, comments: 7 },
+        ];
+        let queries = [
+            { id: 1, author: 'Alice Brown', timestamp: '3 hours ago', title: 'Question about Admissions', content: 'How do I apply?', status: 'Open' },
+            { id: 2, author: 'Bob Green', timestamp: '2 days ago', title: 'Scholarship Information', content: 'Are there any available?', status: 'Closed' },
+        ];
+
+        function renderPosts() {
+            const items = activeTab === 'alumni' ? posts : queries;
+            postsContent.innerHTML = items.map(item => `
+                <div class="bg-white rounded-lg shadow-md p-5 mb-5 transition-transform duration-200 hover:scale-[1.02] fade-in">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <strong>${item.author}</strong>
+                        <span class="ml-2 text-gray-400">${item.timestamp}</span>
+                    </div>
+                    <h4 class="text-xl font-semibold my-2 text-gray-800">${item.title}</h4>
+                    <p class="text-gray-700">${item.content}</p>
+                    <div class="text-xs text-gray-500 mt-3 border-l-4 border-blue-500 pl-2">
+                        ${activeTab === 'alumni'
+                    ? `${item.likes} likes · ${item.comments} comments`
+                    : `Status: ${item.status}`
+                }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setActiveTab(tab) {
+            activeTab = tab;
+            alumniTab.classList.toggle('bg-blue-500', tab === 'alumni');
+            alumniTab.classList.toggle('text-white', tab === 'alumni');
+            studentTab.classList.toggle('bg-blue-500', tab === 'student');
+            studentTab.classList.toggle('text-white', tab === 'student');
+            renderPosts();
+            updateCreateButton();
+        }
+
+        function updateCreateButton() {
+            const icon = activeTab === 'alumni' ? 'fa-pen' : 'fa-question-circle';
+            const text = activeTab === 'alumni' ? 'Create your post' : 'Create your query';
+            createButton.innerHTML = `<i class="fas ${icon} mr-2"></i>${text}`;
+        }
+
+        function showCreateForm() {
+            createFormOverlay.classList.remove('hidden');
+            formTitle.textContent = activeTab === 'alumni' ? 'Create a New Post' : 'Ask a New Query';
+            createForm.querySelector('button[type="submit"]').textContent = activeTab === 'alumni' ? 'Post' : 'Submit Query';
+        }
+
+        function hideCreateForm() {
+            createFormOverlay.classList.add('hidden');
+            postTitleInput.value = '';
+            postContentInput.value = '';
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            const timestamp = new Date().toLocaleString();
+            const newItem = {
+                id: activeTab === 'alumni' ? posts.length + 1 : queries.length + 1,
+                author: 'Current User',
+                timestamp,
+                title: postTitleInput.value,
+                content: postContentInput.value,
+            };
+
+            if (activeTab === 'alumni') {
+                newItem.likes = 0;
+                newItem.comments = 0;
+                posts.unshift(newItem);
+            } else {
+                newItem.status = 'Open';
+                queries.unshift(newItem);
+            }
+
+            hideCreateForm();
+            renderPosts();
+        }
+
+        alumniTab.addEventListener('click', () => setActiveTab('alumni'));
+        studentTab.addEventListener('click', () => setActiveTab('student'));
+        createButton.addEventListener('click', showCreateForm);
+        cancelButton.addEventListener('click', hideCreateForm);
+        createForm.addEventListener('submit', handleSubmit);
+
+        // Initial render
+        setActiveTab('alumni');
+    </script>
+
+    <!-- Footer -->
+    <div class="font-montserrat bg-antiquewhite">
+        <footer class="text-center text-lg-start text-muted bg-antiquewhite overflow-hidden">
+            <!-- Social Media Links -->
+            <section class="flex justify-center items-center p-4 border-b border-gray-300">
+                <div class="hidden lg:flex items-center text-lg font-bold text-navy mx-10">
+                    Get connected with us on social networks:
+                </div>
+                <div class="flex space-x-4 text-2xl text-gray-700">
+                    <a href="https://www.facebook.com/ducsjmc/" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="https://twitter.com/DUCSJMC" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://maps.app.goo.gl/hVm5jknh8hpqxqP88" target="_blank"><i
+                            class="fab fa-google"></i></a>
+                    <a href="https://www.instagram.com/dumasscomm/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/school/dibrugarh-university-dibrugarh/?originalSubdomain=in"
+                        target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Footer Links -->
+            <section class="container mx-auto mt-5 text-center lg:text-left">
+                <div class="flex flex-wrap">
+                    <!-- About Section -->
+                    <div class="w-full lg:w-1/4 px-4 mb-6 lg:mb-0">
+                        <h6 class="uppercase font-bold text-navy mb-4 flex items-center text-lg">
+                            <i class="fas fa-university mr-2"></i> CSJMC DU
+                        </h6>
+                        <p class="text-base font-medium text-navy">&copy; Centre for Studies in Journalism & Mass
+                            Communication</p>
+                    </div>
+
+                    <!-- Important Links -->
+                    <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-6 lg:mb-0">
+                        <h6 class="uppercase font-bold text-navy mb-4 text-lg">Important Links</h6>
+                        <ul class="space-y-2">
+                            <li><a href="https://dibru.ac.in/" target="_blank"
+                                    class="text-gray-700 font-semibold hover:underline">Dibrugarh University</a></li>
+                            <li><a href="https://erp.dibru.work/dibru/student/login" target="_blank"
+                                    class="text-gray-700 font-semibold hover:underline">ERP Portal</a></li>
+                            <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSewaN2-wlaET3fROMTOUrpLsG37Vb5Z-ZY_gy1XPCG7ijENhQ/viewform"
+                                    target="_blank" class="text-gray-700 font-semibold hover:underline">DUAA Portal</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-6 lg:mb-0">
+                        <h6 class="uppercase font-bold text-navy mb-4 text-lg">Quick Links</h6>
+                        <ul class="space-y-2">
+                            <li><a href="/" class="text-gray-700 font-semibold hover:underline">Home</a></li>
+                            <li><a href="https://scribehow.com/shared/Join_CSJMC_Alumni_Association_and_Update_Profile__iAp2_DMCRyGKgzFFMkeF_A"
+                                    target="_blank" class="text-gray-700 font-semibold hover:underline">Website
+                                    Instructions</a></li>
+                            <li><a href="/alumniform" class="text-gray-700 font-semibold hover:underline">Alumni
+                                    Registration</a></li>
+                            <li><a href="https://forms.gle/b6e8wfEJtxntS8uc8" target="_blank"
+                                    class="text-gray-700 font-semibold hover:underline">Report an Error</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Section -->
+                    <div class="w-full lg:w-1/4 px-4">
+                        <h6 class="uppercase font-bold text-navy mb-4 text-lg">Contact</h6>
+                        <p><i class="fas fa-home mr-2"></i><a href="https://maps.app.goo.gl/wWHJG7H3w6JL9xUZ7"
+                                target="_blank" class="text-gray-700 font-semibold hover:underline">Centre For Studies
+                                In Journalism And Mass
+                                Communication, Dibrugarh University, Assam 786004</a></p>
+                        <p><i class="fas fa-envelope mr-2"></i><a href="mailto:ducsjmc@gmail.com"
+                                class="text-gray-700 font-semibold hover:underline">ducsjmc@gmail.com</a></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer Bottom -->
+            <div class="text-center py-3 bg-navy text-white mt-6">
+                Developed By:
+                <a href="https://www.linkedin.com/in/saheb-ullah-05292a258/" target="_blank"
+                    class="font-bold hover:underline">Md Sahebullah</a> &
+                <a href="https://www.linkedin.com/in/kalyangupta12/" target="_blank"
+                    class="font-bold hover:underline">Kalyan
+                    Gupta</a>
+            </div>
+        </footer>
+    </div>
+    <!--  -->
+    <!--  -->
+    <script>
+        // Toggle mobile menu
+        document.getElementById('navbar-toggle').addEventListener('click', function () {
+            document.getElementById('navbar-menu').classList.toggle('hidden');
+        });
+
+        // Set active link
+        function setActiveLink(link) {
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active', 'text-yellow-300', 'bg-blue-600', 'font-semibold'));
+            link.classList.add('active', 'text-yellow-300', 'bg-blue-600', 'font-semibold');
+        }
+
+        // Add click event listeners to nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                setActiveLink(this);
+                const href = this.getAttribute('href');
+                if (href) window.location.href = href;
+            });
+        });
+
+        // Toggle auth button
+        document.getElementById('auth-button').addEventListener('click', function () {
+            this.textContent = this.textContent.trim() === 'Join us' ? 'Log Out' : 'Join us';
+        });
+    </script>
+    <!--  -->
+</body>
+
+</html>

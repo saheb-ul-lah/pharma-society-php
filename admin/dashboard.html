@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sidebar: '#ffffff',
+                        sidebarHover: '#f0f0f0',
+                        sidebarBorder: '#e0e0e0',
+                        headerBorder: '#e0e0e0',
+                        statCard: '#ffffff',
+                        statCardShadow: 'rgba(0, 0, 0, 0.1)',
+                        tableHeader: '#e0e0e0',
+                        tableCell: '#e0e0e0',
+                        badgeActive: '#4CAF50',
+                        badgeInactive: '#9E9E9E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .transition-sidebar {
+            transition: width 0.3s ease;
+        }
+        .transition-content {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="bg-sidebar border-r border-sidebarBorder transition-sidebar w-64 overflow-hidden">
+            <div class="w-64 h-full flex flex-col p-5">
+                <h2 class="text-2xl font-bold mb-8">Pharma Society</h2>
+                <nav class="flex flex-col flex-1">
+                    <button class="flex items-center p-2 mb-2 w-full text-left hover:bg-sidebarHover rounded" data-nav="Dashboard">
+                        <i class="fas fa-home mr-2"></i> Dashboard
+                    </button>
+                    <button class="flex items-center p-2 mb-2 w-full text-left hover:bg-sidebarHover rounded" data-nav="Alumni">
+                        <i class="fas fa-user-graduate mr-2"></i> Alumni
+                    </button>
+                    <button class="flex items-center p-2 mb-2 w-full text-left hover:bg-sidebarHover rounded" data-nav="Students">
+                        <i class="fas fa-user-friends mr-2"></i> Students
+                    </button>
+                    <button class="flex items-center p-2 mb-2 w-full text-left hover:bg-sidebarHover rounded" data-nav="Posts">
+                        <i class="fas fa-file-alt mr-2"></i> Posts
+                    </button>
+                    <button class="flex items-center p-2 mb-2 w-full text-left hover:bg-sidebarHover rounded" data-nav="Queries">
+                        <i class="fas fa-question-circle mr-2"></i> Queries
+                    </button>
+                </nav>
+                <button class="flex items-center p-2 text-red-600">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="flex justify-between items-center p-4 border-b border-headerBorder">
+                <div class="flex items-center">
+                    <button id="sidebarToggle" class="text-xl mr-4">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <input type="search" placeholder="Search..." class="p-2 border border-gray-300 rounded" id="searchInput">
+                </div>
+                <div class="flex items-center">
+                    <button class="text-xl mr-4">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <div class="flex items-center cursor-pointer">
+                        <img src="https://via.placeholder.com/32" alt="User" class="w-8 h-8 rounded-full mr-2">
+                        <span class="mr-2">John Doe</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page content -->
+            <main id="pageContent" class="flex-1 overflow-y-auto p-6 transition-content">
+                <!-- Content will be dynamically inserted here -->
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const quickStats = [
+            { label: 'Active Users', value: 1234, change: 5.6 },
+            { label: 'New Registrations', value: 567, change: -2.3 },
+            { label: 'Upcoming Events', value: 12, change: 10.5 },
+            { label: 'Open Tickets', value: 89, change: -7.8 },
+        ];
+
+        const alumni = [
+            { id: 1, name: 'John Doe', email: 'john@example.com', passingYear: 2021, status: 'Active' },
+            { id: 2, name: 'Jane Smith', email: 'jane@example.com', passingYear: 2022, status: 'Active' },
+            { id: 3, name: 'Bob Johnson', email: 'bob@example.com', passingYear: 2016, status: 'Inactive' },
+        ];
+
+        const students = [
+            { id: 1, name: 'Alice Brown', email: 'alice@example.com', graduationYear: 2024, status: 'Active' },
+            { id: 2, name: 'Charlie Davis', email: 'charlie@example.com', graduationYear: 2025, status: 'Active' },
+            { id: 3, name: 'Eva Green', email: 'eva@example.com', graduationYear: 2023, status: 'Inactive' },
+        ];
+
+        const posts = [
+            { id: 1, title: 'First Blog Post', author: 'John Doe', dateCreated: '2023-05-01', status: 'Published' },
+            { id: 2, title: 'Upcoming Events', author: 'Jane Smith', dateCreated: '2023-05-05', status: 'Draft' },
+            { id: 3, title: 'New Product Announcement', author: 'Bob Johnson', dateCreated: '2023-05-10', status: 'Published' },
+        ];
+
+        const queries = [
+            { id: 1, title: 'Admission Query', author: 'Prospective Student', dateCreated: '2023-05-15', status: 'Open' },
+            { id: 2, title: 'Course Information', author: 'Current Student', dateCreated: '2023-05-18', status: 'Closed' },
+            { id: 3, title: 'Alumni Event', author: 'Alumni Member', dateCreated: '2023-05-20', status: 'In Progress' },
+        ];
+
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const pageContent = document.getElementById('pageContent');
+        const searchInput = document.getElementById('searchInput');
+        const navButtons = document.querySelectorAll('[data-nav]');
+
+        // State
+        let activeNavItem = 'Dashboard';
+        let isSidebarVisible = true;
+
+        // Functions
+        function toggleSidebar() {
+            isSidebarVisible = !isSidebarVisible;
+            sidebar.style.width = isSidebarVisible ? '16rem' : '0';
+        }
+
+        function renderDashboard() {
+            return `
+                <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    ${quickStats.map(stat => `
+                        <div class="bg-statCard p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg text-gray-600 mb-2">${stat.label}</h3>
+                            <p class="text-3xl font-bold mb-2">${stat.value.toLocaleString()}</p>
+                            <p class="text-sm ${stat.change >= 0 ? 'text-green-500' : 'text-red-500'}">
+                                ${stat.change >= 0 ? '+' : ''}${stat.change}% from last month
+                            </p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderTable(data, columns) {
+            return `
+                <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            ${columns.map(column => `<th class="p-3 text-left">${column.label}</th>`).join('')}
+                            <th class="p-3 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(item => `
+                            <tr class="border-b border-gray-200">
+                                ${columns.map(column => `
+                                    <td class="p-3">
+                                        ${column.key === 'status' 
+                                            ? `<span class="px-2 py-1 rounded-full text-xs ${item[column.key] === 'Active' || item[column.key] === 'Published' || item[column.key] === 'Open' 
+                                                ? 'bg-green-500 text-white' 
+                                                : 'bg-gray-500 text-white'}">${item[column.key]}</span>`
+                                            : item[column.key]}
+                                    </td>
+                                `).join('')}
+                                <td class="p-3">
+                                    <button class="text-blue-500 hover:text-blue-700 mr-2"><i class="fas fa-eye"></i></button>
+                                    <button class="text-green-500 hover:text-green-700 mr-2"><i class="fas fa-edit"></i></button>
+                                    <button class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderContent() {
+            let content = '';
+            switch (activeNavItem) {
+                case 'Dashboard':
+                    content = renderDashboard();
+                    break;
+                case 'Alumni':
+                    content = `
+                        <h1 class="text-3xl font-bold mb-6">Alumni Management</h1>
+                        ${renderTable(alumni, [
+                            { key: 'name', label: 'Name' },
+                            { key: 'email', label: 'Email' },
+                            { key: 'passingYear', label: 'Passing Year' },
+                            { key: 'status', label: 'Status' },
+                        ])}
+                    `;
+                    break;
+                case 'Students':
+                    content = `
+                        <h1 class="text-3xl font-bold mb-6">Student Management</h1>
+                        ${renderTable(students, [
+                            { key: 'name', label: 'Name' },
+                            { key: 'email', label: 'Email' },
+                            { key: 'graduationYear', label: 'Graduation Year' },
+                            { key: 'status', label: 'Status' },
+                        ])}
+                    `;
+                    break;
+                case 'Posts':
+                    content = `
+                        <h1 class="text-3xl font-bold mb-6">Posts Management</h1>
+                        ${renderTable(posts, [
+                            { key: 'title', label: 'Title' },
+                            { key: 'author', label: 'Author' },
+                            { key: 'dateCreated', label: 'Date Created' },
+                            { key: 'status', label: 'Status' },
+                        ])}
+                    `;
+                    break;
+                case 'Queries':
+                    content = `
+                        <h1 class="text-3xl font-bold mb-6">Queries Management</h1>
+                        ${renderTable(queries, [
+                            { key: 'title', label: 'Title' },
+                            { key: 'author', label: 'Author' },
+                            { key: 'dateCreated', label: 'Date Created' },
+                            { key: 'status', label: 'Status' },
+                        ])}
+                    `;
+                    break;
+                default:
+                    content = renderDashboard();
+            }
+            return content;
+        }
+
+        function updateContent() {
+            pageContent.style.opacity = '0';
+            pageContent.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                pageContent.innerHTML = renderContent();
+                pageContent.style.opacity = '1';
+                pageContent.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        function filterData(searchTerm) {
+            const filteredAlumni = alumni.filter(item => 
+                Object.values(item).some(val => 
+                    val.toString().toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            );
+            const filteredStudents = students.filter(item => 
+                Object.values(item).some(val => 
+                    val.toString().toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            );
+            const filteredPosts = posts.filter(item => 
+                Object.values(item).some(val => 
+                    val.toString().toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            );
+            const filteredQueries = queries.filter(item => 
+                Object.values(item).some(val => 
+                    val.toString().toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            );
+
+            // Update the data
+            alumni.splice(0, alumni.length, ...filteredAlumni);
+            students.splice(0, students.length, ...filteredStudents);
+            posts.splice(0, posts.length, ...filteredPosts);
+            queries.splice(0, queries.length, ...filteredQueries);
+
+            // Re-render the content
+            updateContent();
+        }
+
+        // Event Listeners
+        sidebarToggle.addEventListener('click', toggleSidebar);
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                activeNavItem = button.getAttribute('data-nav');
+                updateContent();
+            });
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            filterData(e.target.value);
+        });
+
+        // Initial render
+        updateContent();
+    </script>
+</body>
+</html>
