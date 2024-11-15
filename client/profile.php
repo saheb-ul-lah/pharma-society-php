@@ -1,3 +1,147 @@
+<?php
+session_start();
+
+include('includes/db_connect.php');
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Add this function at the top to handle toast messages
+function setToastMessage($message, $type = 'success') {
+    $_SESSION['toast_message'] = $message;
+    $_SESSION['toast_type'] = $type;
+}
+
+$user_email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
+$userData = [];
+$degrees = [];
+
+// Fetch user data from the database
+if ($user_email) {
+    // Fetch user data
+    $stmt = $conn->prepare("SELECT id, full_name, email, phone, dob, gender, address, job_title, company, company_location, linkedin, twitter, facebook, profile_picture FROM alumni_registration WHERE email = ?");
+    $stmt->bind_param("s", $user_email);
+    $stmt->execute();
+    $stmt->bind_result($alumni_id, $fullName, $email, $phone, $dob, $gender, $address, $jobTitle, $company, $companyLocation, $linkedin, $twitter, $facebook, $profile_picture);
+    if ($stmt->fetch()) {
+        $userData = [
+            'alumni_id' => $alumni_id,
+            'fullName' => $fullName,
+            'email' => $email,
+            'phone' => $phone,
+            'dob' => $dob,
+            'gender' => $gender,
+            'address' => $address,
+            'jobTitle' => $jobTitle,
+            'company' => $company,
+            'companyLocation' => $companyLocation,
+            'linkedin' => $linkedin,
+            'twitter' => $twitter,
+            'facebook' => $facebook,
+            'profile_picture' => $profile_picture
+
+        ];
+    }
+    $stmt->close();
+
+    // Fetch degrees from the database
+    $stmt = $conn->prepare("SELECT degree, year FROM alumni_degrees WHERE alumni_id = ?");
+    $stmt->bind_param("i", $alumni_id);
+    $stmt->execute();
+    $stmt->bind_result($degree, $year);
+    while ($stmt->fetch()) {
+        $degrees[] = [
+            'degree' => $degree,
+            'year' => $year
+        ];
+    }
+    $stmt->close();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $fullName = $_POST['fullName'];
+    $phone = $_POST['phone'];
+    $dob = $_POST['dob'];
+    $gender = $_POST['gender'];
+    $address = $_POST['address'];
+    $jobTitle = $_POST['jobTitle'];
+    $company = $_POST['company'];
+    $companyLocation = $_POST['companyLocation'];
+    $linkedin = $_POST['linkedin'];
+    $twitter = $_POST['twitter'];
+    $facebook = $_POST['facebook'];
+
+    // Handle profile picture upload
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
+        $fileTmpPath = $_FILES['profile_picture']['tmp_name'];
+        $fileName = $_FILES['profile_picture']['name'];
+        $fileSize = $_FILES['profile_picture']['size'];
+        $fileType = $_FILES['profile_picture']['type'];
+        $fileNameCmps = explode(".", $fileName);
+        $fileExtension = strtolower(end($fileNameCmps));
+        
+        $allowedfileExtensions = array('jpg', 'gif', 'png', 'jpeg');
+
+        if (in_array($fileExtension, $allowedfileExtensions)) {
+            $newFileName = uniqid() . '.' . $fileExtension;
+            $uploadFileDir = './uploads/';
+            $dest_path = $uploadFileDir . $newFileName;
+
+            if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                $stmt = $conn->prepare("UPDATE alumni_registration SET profile_picture = ? WHERE email = ?");
+                $stmt->bind_param("ss", $newFileName, $user_email);
+                if ($stmt->execute()) {
+                    setToastMessage('Profile picture uploaded successfully!');
+                } else {
+                    setToastMessage('Error updating profile picture in database.', 'error');
+                }
+                $stmt->close();
+            } else {
+                setToastMessage('There was an error moving the uploaded file.', 'error');
+            }
+        } else {
+            setToastMessage('Upload failed. Allowed file types: ' . implode(", ", $allowedfileExtensions), 'error');
+        }
+    }
+
+    // Update user data
+    if ($user_email) {
+        $stmt = $conn->prepare("UPDATE alumni_registration SET full_name = ?, phone = ?, dob = ?, gender = ?, address = ?, job_title = ?, company = ?, company_location = ?, linkedin = ?, twitter = ?, facebook = ? WHERE email = ?");
+        $stmt->bind_param("ssssssssssss", $fullName, $phone, $dob, $gender, $address, $jobTitle, $company, $companyLocation, $linkedin, $twitter, $facebook, $user_email);
+        if ($stmt->execute()) {
+            setToastMessage('Profile updated successfully!');
+        } else {
+            setToastMessage('Error updating profile. Please try again.', 'error');
+        }
+        $stmt->close();
+    }
+
+    // Handle degrees update
+    if (isset($_POST['degree']) && isset($_POST['year'])) {
+        $stmt = $conn->prepare("DELETE FROM alumni_degrees WHERE alumni_id = ?");
+        $stmt->bind_param("i", $alumni_id);
+        $stmt->execute();
+        $stmt->close();
+
+        foreach ($_POST['degree'] as $index => $degree) {
+            $year = $_POST['year'][$index];
+            if (!empty($degree) && !empty($year)) {
+                $stmt = $conn->prepare("INSERT INTO alumni_degrees (alumni_id, degree, year) VALUES (?, ?, ?)");
+                $stmt->bind_param("iss", $alumni_id, $degree, $year);
+                $stmt->execute();
+                $stmt->close();
+            }
+        }
+        setToastMessage('Profile updated successfully!');
+    }
+    
+    // Redirect to reload the page
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,28 +172,17 @@
             padding: 30px 0;
         }
     </style>
-
-
-
-
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
-
 </head>
 
 <body class="bg-gray-100 min-h-screen">
     <nav class="sticky top-0 z-50 bg-navy py-3 px-6 shadow-lg">
         <div class="container mx-auto flex flex-wrap items-center justify-between">
-            <!-- Logo and Title -->
             <a href="./index.html" class="flex items-center">
                 <img src="https://ccsaalumni.in/static/media/du.ac81f37e7c52c0eb3d53.png" alt="DU Logo"
-                    class="w-12 h-12 rounded-full mr-3">
+                    class="w-12 h-12 rounded-full mr -3">
                 <span class="text-xl text-antique-white font-bold">Pharmaceutical Society</span>
             </a>
 
-            <!-- Navbar Toggle for Mobile -->
             <button id="navbar-toggle" class="lg:hidden text-antique-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -58,7 +191,6 @@
                 </svg>
             </button>
 
-            <!-- Navbar Menu -->
             <div id="navbar-menu" class="hidden lg:flex lg:items-center w-full lg:w-auto mt-4 lg:mt-0">
                 <ul class="flex flex-col lg:flex-row lg:ml-auto space-x-4 items-center">
                     <li><a href="./index.html"
@@ -77,7 +209,6 @@
                             class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">News
                             and Events</a></li>
 
-                    <!-- Dropdown Menu for Forms -->
                     <li class="relative group">
                         <a href="#"
                             class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Register</a>
@@ -95,7 +226,6 @@
                             class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Posts</a>
                     </li>
 
-                    <!-- Profile Image -->
                     <li class="ml-auto">
                         <a href="./profile.html" class="flex items-center">
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ-l3onxJrLVYB8Ak7aKCYcOznSKyaPz1P8Q&s"
@@ -105,7 +235,6 @@
                     </li>
                 </ul>
 
-                <!-- Join Us Button -->
                 <button id="auth-button"
                     class="ml-4 bg-button-red text-antique-white px-6 py-2 rounded-full transition duration-300 ease-in-out hover:bg-button-red-hover">
                     Join us
@@ -113,33 +242,36 @@
             </div>
         </div>
     </nav>
-    <!-- <nav class="bg-indigo-600 py-4 px-6 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-white">Pharma Society</a>
-            <button id="logout-btn"
-                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-all flex items-center">
-                <i class="fas fa-sign-out-alt mr-2"></i> Logout
-            </button>
-        </div>
-    </nav> -->
 
     <div class="container mx-auto mt-8 mb-8 p-6 bg-white rounded-lg shadow-xl">
         <h1 class="text-3xl font-bold text-center text-indigo-600 mb-8">Alumni Profile Dashboard</h1>
 
-        <form id="profile-form" class="space-y-6">
-            <div class="flex flex-col md:flex-row gap-8">
-                <!-- Profile Picture Section -->
+        <form id="profile-form" class="space-y-6" method="POST" enctype="multipart/form-data">
+        <div class="flex flex-col md:flex-row gap-8">
                 <div class="md:w-1/3 flex flex-col items-center">
-                    <img id="profile-picture" src="/placeholder.svg" alt="Profile Picture"
-                        class="w-40 h-40 rounded-full border-2 object-cover mb-4">
-                    <label for="profile-picture-input"
+                    <img id="profile-picture" src="<?php echo 'uploads/' . htmlspecialchars($userData['profile_picture'] ?? 'placeholder.png'); ?>" alt="Profile Picture"
+                    class="w-40 h-40 rounded-full border-2 object-cover mb-4">
+                    <label for="profile-picture-input" 
                         class="cursor-pointer bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition-all">
                         Change Picture
                     </label>
-                    <input id="profile-picture-input" type="file" accept="image/*" class="hidden">
+                    <input id="profile-picture-input" 
+                        name="profile_picture" 
+                        type="file" 
+                        accept="image/*" 
+                        class="hidden">
+                    <!-- <div class="col-span-2">
+                            <label for="profile_picture" class="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
+                            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="block w-full text-sm text-gray-500 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <i class="fas fa-save mr-2"></i> Save Changes
+                            </button>
+                        </div> -->
                 </div>
 
-                <!-- Profile Information Section -->
                 <div class="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-2">
                         <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
@@ -149,24 +281,23 @@
                             </div>
                             <input type="text" id="fullName" name="fullName"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="John Doe">
+                                placeholder="John Doe" value="<?php echo htmlspecialchars($userData['fullName'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email
-                            (Non-editable)</label>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email (Non-editable)</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-envelope text-gray-400"></i>
                             </div>
                             <input type="email" id="email" name="email"
                                 class="bg-gray-100 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                readonly>
+                                value="<?php echo htmlspecialchars($userData['email'] ?? ''); ?>" readonly>
                         </div>
                     </div>
 
-                    <div>
+                    <div <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -174,7 +305,7 @@
                             </div>
                             <input type="tel" id="phone" name="phone"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="1234567890">
+                                placeholder="1234567890" value="<?php echo htmlspecialchars($userData['phone'] ?? ''); ?>">
                         </div>
                     </div>
 
@@ -185,7 +316,8 @@
                                 <i class="fas fa-calendar text-gray-400"></i>
                             </div>
                             <input type="date" id="dob" name="dob"
-                                class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md">
+                                class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
+                                value="<?php echo htmlspecialchars($userData['dob'] ?? ''); ?>">
                         </div>
                     </div>
 
@@ -198,9 +330,9 @@
                             <select id="gender" name="gender"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md">
                                 <option value="">Select gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
+                                <option value="male" <?php echo (isset($userData['gender']) && $userData['gender'] === 'male') ? 'selected' : ''; ?>>Male</option>
+                                <option value="female" <?php echo (isset($userData['gender']) && $userData['gender'] === 'female') ? 'selected' : ''; ?>>Female</option>
+                                <option value="other" <?php echo (isset($userData['gender']) && $userData['gender'] === 'other') ? 'selected' : ''; ?>>Other</option>
                             </select>
                         </div>
                     </div>
@@ -213,100 +345,96 @@
                             </div>
                             <textarea id="address" name="address" rows="3"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="Enter your address"></textarea>
+                                placeholder="Enter your address"><?php echo htmlspecialchars($userData['address'] ?? ''); ?></textarea>
                         </div>
-                    </div>
-
-                    <!-- Degrees Section -->
-                    <div class="col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Degrees</label>
-                        <div class="" id="degrees-container">
-                            <!-- Degree inputs will be dynamically added here -->
-                        </div>
-                        <button type="button" id="add-degree-btn"
-                            class="mt-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <i class="fas fa-plus mr-2"></i> Add Another Degree
-                        </button>
                     </div>
 
                     <div>
-                        <label for="jobTitle" class="block text-sm font-medium text-gray-700 mb-1">Current Job
-                            Title</label>
+                        <label for="jobTitle" class="block text-sm font-medium text-gray-700 mb-1">Current Job Title</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-briefcase text-gray-400"></i>
                             </div>
                             <input type="text" id="jobTitle" name="jobTitle"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="Pharmacist">
+                                placeholder="Pharmacist" value="<?php echo htmlspecialchars($userData['jobTitle'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <div>
-                        <label for="company"
-                            class="block text-sm font-medium text-gray-700 mb-1">Company/Organization</label>
+                        <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Company/Organization</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-building text-gray-400"></i>
                             </div>
                             <input type="text" id="company" name="company"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="ABC Pharmacy">
+                                placeholder="ABC Pharmacy" value="<?php echo htmlspecialchars($userData['company'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <div>
-                        <label for="companyLocation" class="block text-sm font-medium text-gray-700 mb-1">Current
-                            Location</label>
+                        <label for="companyLocation" class="block text-sm font-medium text-gray-700 mb-1">Current Location</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-map-pin text-gray-400"></i>
                             </div>
                             <input type="text" id="companyLocation" name="companyLocation"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="New York, USA">
+                                placeholder="New York, USA" value="<?php echo htmlspecialchars($userData['companyLocation'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <div>
-                        <label for="linkedin" class="block text-sm font-medium text-gray-700 mb-1">LinkedIn
-                            Profile</label>
+                        <label for="linkedin" class="block text-sm font-medium text-gray-700 mb-1">LinkedIn Profile</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fab fa-linkedin text-gray-400"></i>
                             </div>
                             <input type="url" id="linkedin" name="linkedin"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="https://www.linkedin.com/in/johndoe">
+                                placeholder="https://www.linkedin.com/in/johndoe" value="<?php echo htmlspecialchars($userData['linkedin'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <div>
-                        <label for="twitter" class="block text-sm font-medium text-gray-700 mb-1">Twitter
-                            Profile</label>
+                        <label for="twitter" class="block text-sm font-medium text-gray-700 mb-1">Twitter Profile</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fab fa-twitter text-gray-400"></i>
                             </div>
                             <input type="url" id="twitter" name="twitter"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="https://twitter.com/johndoe">
+                                placeholder="https://twitter.com/johndoe" value="<?php echo htmlspecialchars($userData['twitter'] ?? ''); ?>">
                         </div>
                     </div>
 
                     <div>
-                        <label for="facebook" class="block text-sm font-medium text-gray-700 mb-1">Facebook
-                            Profile</label>
+                        <label for="facebook" class="block text-sm font-medium text-gray-700 mb-1">Facebook Profile</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fab fa-facebook text-gray-400"></i>
                             </div>
                             <input type="url" id="facebook" name="facebook"
                                 class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 pr-3 py-2 sm:text-sm border-gray-300 rounded-md"
-                                placeholder="https://www.facebook.com/johndoe">
+                                placeholder="https://www.facebook.com/johndoe" value="<?php echo htmlspecialchars($userData['facebook'] ?? ''); ?>">
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-xl font-bold mb-4">Degrees</h2>
+                <div id="degree-container">
+                    <?php foreach ($degrees as $index => $degree): ?>
+                        <div class="flex items-center mb-4">
+                            <input type="text" name="degree[]" placeholder="Degree" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md mr-2" value="<?php echo htmlspecialchars($degree['degree']); ?>">
+                            <input type="text" name="year[]" placeholder="Year" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" value="<?php echo htmlspecialchars($degree['year']); ?>">
+                            <button type="button" class="ml-2 text-red-500" onclick=" this.parentElement.remove();">Remove</button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <button type="button" class="mt-4 bg-indigo-500 text-white px-4 py-2 rounded" onclick="addDegree()">Add Degree</button>
             </div>
 
             <div class="flex justify-end">
@@ -318,10 +446,8 @@
         </form>
     </div>
 
-    <!-- Footer -->
     <div class="mt-8 font-montserrat bg-antiquewhite">
         <footer class="text-center text-lg-start text-muted bg-antiquewhite overflow-hidden">
-            <!-- Social Media Links -->
             <section class="flex justify-center items-center p-4 border-b border-gray-300">
                 <div class="hidden lg:flex items-center text-lg font-bold text-navy mx-10">
                     Get connected with us on social networks:
@@ -339,10 +465,8 @@
                 </div>
             </section>
 
-            <!-- Footer Links -->
             <section class="container mx-auto mt-5 text-center lg:text-left">
                 <div class="flex flex-wrap">
-                    <!-- About Section -->
                     <div class="w-full lg:w-1/4 px-4 mb-6 lg:mb-0">
                         <h6 class="uppercase font-bold text-navy mb-4 flex items-center text-lg">
                             <i class="fas fa-university mr-2"></i> Pharmaceutical Society,
@@ -353,7 +477,6 @@
                         </p>
                     </div>
 
-                    <!-- Important Links -->
                     <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-6 lg:mb-0">
                         <h6 class="uppercase font-bold text-navy mb-4 text-lg">
                             Important Links
@@ -374,7 +497,6 @@
                         </ul>
                     </div>
 
-                    <!-- Quick Links -->
                     <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-6 lg:mb-0">
                         <h6 class="uppercase font-bold text-navy mb-4 text-lg">
                             Quick Links
@@ -385,12 +507,10 @@
                             </li>
                             <li>
                                 <a href="https://scribehow.com/shared/Join_CSJMC_Alumni_Association_and_Update_Profile__iAp2_DMCRyGKgzFFMkeF_A"
-                                    target="_blank" class="text-gray-700 font-semibold hover:underline">Website
-                                    Instructions</a>
+                                    target="_blank" class=" text-gray-700 font-semibold hover:underline">Website Instructions</a>
                             </li>
                             <li>
-                                <a href="/alumniform" class="text-gray-700 font-semibold hover:underline">Alumni
-                                    Registration</a>
+                                <a href="/alumniform" class="text-gray-700 font-semibold hover:underline">Alumni Registration</a>
                             </li>
                             <li>
                                 <a href="https://forms.gle/b6e8wfEJtxntS8uc8" target="_blank"
@@ -399,7 +519,6 @@
                         </ul>
                     </div>
 
-                    <!-- Contact Section -->
                     <div class="w-full lg:w-1/4 px-4">
                         <h6 class="uppercase font-bold text-navy mb-4 text-lg">
                             Contact
@@ -418,115 +537,30 @@
                 </div>
             </section>
 
-            <!-- Footer Bottom -->
             <div class="text-center py-3 bg-navy text-white mt-6">
                 Developed By:
                 <a href="#" target="_blank" class="font-bold hover:underline">Digital Solution Cell</a>
             </div>
         </footer>
     </div>
-    <!--  -->
-    <!--  -->
 
-    <!--  -->
     <script>
+        function addDegree() {
+            const degreeContainer = document.getElementById('degree-container');
+            const newDegreeDiv = document.createElement('div');
+            newDegreeDiv.className = 'flex items-center mb-4';
+            newDegreeDiv.innerHTML = `
+                <input type="text" name="degree[]" placeholder="Degree" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md mr-2">
+                <input type="text" name="year[]" placeholder="Year" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                <button type="button" class="ml-2 text-red-500" onclick="this.parentElement.remove();">Remove</button>
+            `;
+            degreeContainer.appendChild(newDegreeDiv);
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('profile-form');
             const profilePictureInput = document.getElementById('profile-picture-input');
             const profilePicture = document.getElementById('profile-picture');
-            const logoutBtn = document.getElementById('logout-btn');
-            const addDegreeBtn = document.getElementById('add-degree-btn');
-            const degreesContainer = document.getElementById('degrees-container');
-
-            // Simulated user data (replace with actual data fetching)
-            const userData = {
-                fullName: 'John Doe',
-                email: 'john.doe@example.com',
-                phone: '1234567890',
-                dob: '1990-01-01',
-                gender: 'male',
-                address: '123 Main St, City, Country',
-                degrees: [{ degree: 'B. Pharm', year: '2015' }],
-                jobTitle: 'Pharmacist',
-                company: 'ABC Pharmacy',
-                companyLocation: 'New York, USA',
-                linkedin: 'https://www.linkedin.com/in/johndoe',
-                twitter: 'https://twitter.com/johndoe',
-                facebook: 'https://www.facebook.com/johndoe'
-            };
-
-            // Populate form with user data
-            Object.keys(userData).forEach(key => {
-                const input = document.getElementById(key);
-                if (input && key !== 'degrees') {
-                    input.value = userData[key];
-                }
-            });
-
-            // Populate degrees
-            function renderDegrees() {
-                degreesContainer.innerHTML = '';
-                userData.degrees.forEach((degree, index) => {
-                    const degreeDiv = document.createElement('div');
-                    degreeDiv.className = 'flex items-center space-x-2 mb-2';
-                    degreeDiv.innerHTML = `
-                        <select name="degree[]" class="flex-grow focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2 sm:text-sm border-gray-300 rounded-md">
-                            <option value="">Select degree</option>
-                            <option value="B. Pharm" ${degree.degree === 'B. Pharm' ? 'selected' : ''}>B. Pharm</option>
-                            <option value="M. Pharm" ${degree.degree === 'M. Pharm' ? 'selected' : ''}>M. Pharm</option>
-                            <option value="B. Pharm (Practice)" ${degree.degree === 'B. Pharm (Practice)' ? 'selected' : ''}>B. Pharm (Practice)</option>
-                            <option value="PhD" ${degree.degree === 'PhD' ? 'selected' : ''}>PhD</option>
-                        </select>
-                        <input  type="number" name="year[]" value="${degree.year}" placeholder="Year" class="w-24 p-2 focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm border-gray-300 rounded-md">
-                        ${index > 0 ? `<button type="button" class="text-red-500 remove-degree"><i class="fas fa-trash"></i></button>` : ''}
-                    `;
-                    degreesContainer.appendChild(degreeDiv);
-                });
-            }
-
-            renderDegrees();
-
-            // Add degree
-            addDegreeBtn.addEventListener('click', function () {
-                userData.degrees.push({ degree: '', year: '' });
-                renderDegrees();
-            });
-
-            // Remove degree
-            degreesContainer.addEventListener('click', function (e) {
-                if (e.target.classList.contains('remove-degree') || e.target.closest('.remove-degree')) {
-                    const index = Array.from(degreesContainer.children).indexOf(e.target.closest('.flex'));
-                    userData.degrees.splice(index, 1);
-                    renderDegrees();
-                }
-            });
-
-            // Handle form submission
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(form);
-                const updatedData = Object.fromEntries(formData.entries());
-
-                // Update degrees
-                updatedData.degrees = Array.from(formData.getAll('degree[]')).map((degree, index) => ({
-                    degree,
-                    year: formData.getAll('year[]')[index]
-                }));
-
-                console.log('Updated profile data:', updatedData);
-
-                // Simulated API call
-                setTimeout(() => {
-                    Toastify({
-                        text: "Profile updated successfully!",
-                        duration: 3000,
-                        close: true,
-                        gravity: "top",
-                        position: "right",
-                        backgroundColor: "#4CAF50",
-                    }).showToast();
-                }, 1000);
-            });
 
             // Handle profile picture change
             profilePictureInput.addEventListener('change', function (e) {
@@ -540,77 +574,79 @@
                 }
             });
 
-            // Handle logout
-            logoutBtn.addEventListener('click', function () {
-                Toastify({
-                    text: "Logged out successfully!",
-                    duration: 3000,
-                    close: true,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: "#f44336",
-                }).showToast();
-                // Implement actual logout logic here
+            // Toggle mobile menu
+            document
+                .getElementById("navbar-toggle")
+                .addEventListener("click", function () {
+                    document.getElementById("navbar-menu").classList.toggle("hidden");
+                });
+
+            // Set active link
+            function setActiveLink(link) {
+                document
+                    .querySelectorAll(".nav-link")
+                    .forEach((el) =>
+                        el.classList.remove(
+                            "active",
+                            "text-yellow-300",
+                            "bg-blue-600",
+                            "font-semibold"
+                        )
+                    );
+                link.classList.add(
+                    "active",
+                    "text-yellow-300",
+                    "bg-blue-600",
+                    "font-semibold"
+                );
+            }
+
+            // Add click event listeners to nav links
+            document.querySelectorAll(".nav-link").forEach((link) => {
+                link.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    setActiveLink(this);
+                    const href = this.getAttribute("href");
+                    if (href) window.location.href = href;
+                });
             });
+
+            // Toggle auth button
+            document
+                .getElementById("auth-button")
+                .addEventListener("click", function () {
+                    this.textContent =
+                        this.textContent.trim() === "Join us" ? "Log Out" : "Join us";
+                });
         });
     </script>
     <script>
-        // Toggle mobile menu
-        document
-            .getElementById("navbar-toggle")
-            .addEventListener("click", function () {
-                document.getElementById("navbar-menu").classList.toggle("hidden");
-            });
-
-        // Set active link
-        function setActiveLink(link) {
-            document
-                .querySelectorAll(".nav-link")
-                .forEach((el) =>
-                    el.classList.remove(
-                        "active",
-                        "text-yellow-300",
-                        "bg-blue-600",
-                        "font-semibold"
-                    )
-                );
-            link.classList.add(
-                "active",
-                "text-yellow-300",
-                "bg-blue-600",
-                "font-semibold"
-            );
-        }
-
-        // Add click event listeners to nav links
-        document.querySelectorAll(".nav-link").forEach((link) => {
-            link.addEventListener("click", function (event) {
-                event.preventDefault();
-                setActiveLink(this);
-                const href = this.getAttribute("href");
-                if (href) window.location.href = href;
-            });
-        });
-
-        // Toggle auth button
-        document
-            .getElementById("auth-button")
-            .addEventListener("click", function () {
-                this.textContent =
-                    this.textContent.trim() === "Join us" ? "Log Out" : "Join us";
-            });
+    <?php if(isset($_SESSION['toast_message'])): ?>
+        Toastify({
+            text: "<?php echo $_SESSION['toast_message']; ?>",
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "<?php echo $_SESSION['toast_type'] === 'error' ? '#ff6b6b' : '#51cf66' ?>",
+            stopOnFocus: true
+        }).showToast();
+        
+        <?php 
+        // Clear the toast message from session
+        unset($_SESSION['toast_message']);
+        unset($_SESSION['toast_type']);
+        ?>
+    <?php endif; ?>
     </script>
-    <!-- Tailwind CSS -->
     <script>
         tailwind.config = {
             theme: {
-                extend: {
+                extend
+                : {
                     colors: {
                         "button-red": "rgb(174, 106, 106)",
                         "button-red-hover": "rgb(150, 90, 90)",
                         navy: "#0c133b",
-                        "button-red": "rgb(174, 106, 106)",
-                        "button-red-hover": "rgb(150, 90, 90)",
                         "antique-white": "#FAEBD7",
                     },
                     fontFamily: {

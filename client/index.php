@@ -1,10 +1,39 @@
+<?php
+session_start(); // Start the session at the beginning of the script
+include('includes/db_connect.php'); // Ensure this file has proper connection details
+
+// Ensure connection was successful
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Check if the session email is set, if not, redirect to login
+$user_name = ''; // Initialize user_name
+if (isset($_SESSION['email'])) {
+    // Use prepared statements to prevent SQL injection
+    $user_email = $_SESSION['email'];
+    $stmt = $conn->prepare("SELECT user_name FROM `signup-users` WHERE user_email = ?");
+    $stmt->bind_param("s", $user_email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Check if the user exists and fetch the username
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = $result->fetch_assoc();
+        $user_name = $row['user_name']; // Assign user_name from the result
+    }
+    // Close the statement
+    $stmt->close();
+}
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Slider</title>
+  <title>Pharmaceutical Society | Dibrugarh University</title>
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
@@ -137,23 +166,28 @@
               events</a>
           </li>
           <!-- Conditionally render this link if the user is authenticated -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Forms
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="./alumni-form.html" onclick="setActiveLink(this)">Alumni Form</a></li>
-              <li><a class="dropdown-item" href="./student-form.html" onclick="setActiveLink(this)">Student Form</a>
-              </li>
-            </ul>
-          </li>
+          <?php if (isset($_SESSION['email'])): ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Forms
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="./alumni-form.php" onclick="setActiveLink(this)">Alumni Form</a></li>
+                            <li><a class="dropdown-item" href="./student-form.html" onclick="setActiveLink(this)">Student Form</a></li>
+                        </ul>
+                    </li>
+          <?php endif; ?>
           <li class="nav-item"><a class="nav-link" href="./posts.html" onclick="setActiveLink(this)">Posts</a></li>
-          <button class="auth-button ms-3" onclick="toggleAuth()">Join us</button>
-          <li class="nav-item"><a class="nav-link" href="./profile.html" onclick="setActiveLink(this)"><img
+          <?php if (isset($_SESSION['email'])): ?>
+              <button class="auth-button ms-3" onclick="window.location.href='logout.php'">Log Out</button>
+              <li class="nav-item"><a class="nav-link" href="./profile.php" onclick="setActiveLink(this)"><img
                 style="position: absolute;top: 20px;right: 60px; height: 40px; width:40px; border-radius: 50%;"
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ-l3onxJrLVYB8Ak7aKCYcOznSKyaPz1P8Q&s"
                 alt="Profile pic"></a></li>
+          <?php else: ?>
+              <button class="auth-button ms-3" onclick="window.location.href='login.php'">Join us</button>
+          <?php endif; ?>
+          
         </ul>
         <!-- Authentication buttons -->
       </div>
@@ -174,7 +208,7 @@
           src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="First slide">
         <div class="carousel-caption d-none d-md-block">
-          <h1 style="margin-bottom: 20px;">Welcome back <span id="username"></span>!</h1>
+          <h1 style="margin-bottom: 20px;">Welcome back <span id="username"><?php echo htmlspecialchars($user_name) ?></span>!</h1>
           <p style="margin-bottom: 100px;">Pharmaceutical Society's Alumni & Students Association, DU</p>
         </div>
       </div>
@@ -184,7 +218,7 @@
           src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="First slide">
         <div class="carousel-caption d-none d-md-block">
-          <h1 style="margin-bottom: 20px;">Welcome back <span id="username"></span>!</h1>
+          <h1 style="margin-bottom: 20px;">Welcome back <span id="username"><?php echo htmlspecialchars($user_name) ?></span>!</h1>
           <p style="margin-bottom: 100px;">Pharmaceutical Society's Alumni & Students Association, DU</p>
         </div>
       </div>
@@ -194,7 +228,7 @@
           src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="First slide">
         <div class="carousel-caption d-none d-md-block">
-          <h1 style="margin-bottom: 20px;">Welcome back <span id="username"></span>!</h1>
+          <h1 style="margin-bottom: 20px;">Welcome back <span id="username"><?php echo htmlspecialchars($user_name) ?></span>!</h1>
           <p style="margin-bottom: 100px;">Pharmaceutical Society's Alumni & Students Association, DU</p>
         </div>
       </div>
@@ -385,12 +419,12 @@
   </script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const username = "User"; // Replace with logic to retrieve authenticated username if available
-      const isAuthenticated = true; // Set this based on actual authentication status
+      // const username = "User"; // Replace with logic to retrieve authenticated username if available
+      // const isAuthenticated = true; // Set this based on actual authentication status
 
-      if (isAuthenticated) {
-        document.getElementById("username").textContent = username;
-      }
+      // if (isAuthenticated) {
+      //   document.getElementById("username").textContent = username;
+      // }
 
       // Fetch and display notifications
       fetch("https://csjmcadmin-api.vercel.app/notifications")
