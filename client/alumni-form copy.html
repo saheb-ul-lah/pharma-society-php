@@ -130,11 +130,10 @@
     </div>
   </nav>
   <div class="container mx-auto max-w-3xl bg-white shadow-lg rounded-lg overflow-hidden p-6 mt-6 mb-6 fade-in">
-    <h1 class="text-2xl font-bold mb-6 text-center text-indigo-600 border-b-2 border-indigo-600 pb-2">Pharmaceutical
-      Society Alumni Registration Form</h1>
+    <h1 class="text-2xl font-bold mb-6 text-center text-indigo-600 border-b-2 border-indigo-600 pb-2">Pharmaceutical Society Alumni Registration Form</h1>
     <p class="text-gray-600 mb-8 text-center font-bold ">Please fill out the form with your correct information.</p>
 
-    <form id="registrationForm" class="space-y-8" enctype="multipart/form-data">
+    <form id="registrationForm" class="space-y-8">
       <section>
         <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Personal Information</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -198,20 +197,17 @@
         <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Career Information</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label for="jobTitle" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Current Job
-              Title</label>
+            <label for="jobTitle" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Current Job Title</label>
             <input type="text" id="jobTitle" name="jobTitle"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
           <div>
-            <label for="company"
-              class="block text-sm font-medium text-gray-700 mb-1 font-bold">Company/Organization</label>
+            <label for="company" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Company/Organization</label>
             <input type="text" id="company" name="company"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
           <div>
-            <label for="companyLocation" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Current
-              Location</label>
+            <label for="companyLocation" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Current Location</label>
             <input type="text" id="companyLocation" name="companyLocation"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
@@ -222,8 +218,7 @@
         <h2 class="text-2xl font-semibold mb-4 text-indigo-600">Social Handles [Optional]</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label for="linkedin" class="block text-sm font-medium text-gray-700 mb-1 font-bold">LinkedIn
-              Profile</label>
+            <label for="linkedin" class="block text-sm font-medium text-gray-700 mb-1 font-bold">LinkedIn Profile</label>
             <input type="url" id="linkedin" name="linkedin"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
@@ -233,8 +228,7 @@
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
           <div>
-            <label for="facebook" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Facebook
-              Profile</label>
+            <label for="facebook" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Facebook Profile</label>
             <input type="url" id="facebook" name="facebook"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
@@ -261,95 +255,75 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('registrationForm');
-  const degreeEntries = document.getElementById('degreeEntries');
-  const addDegreeButton = document.getElementById('addDegree');
-  const profilePictureInput = document.getElementById('profilePicture');
-  const imagePreview = document.getElementById('imagePreview');
-  const previewImage = document.getElementById('previewImage');
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('registrationForm');
+      const degreeEntries = document.getElementById('degreeEntries');
+      const addDegreeButton = document.getElementById('addDegree');
+      const profilePictureInput = document.getElementById('profilePicture');
+      const imagePreview = document.getElementById('imagePreview');
+      const previewImage = document.getElementById('previewImage');
 
-  let degreeCount = 0;
+      let degreeCount = 0;
 
-  function addDegreeEntry() {
-    const entryDiv = document.createElement('div');
-    entryDiv.className = 'degree-entry grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 fade-in';
-    entryDiv.innerHTML = `
-      <div>
-        <label for="degree-${degreeCount}" class="block text-sm font-medium text-gray-700 mb-1">Degree obtained *</label>
-        <select id="degree-${degreeCount}" name="degree[]" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <option value="">Select a degree</option>
-          <option value="B. Pharm">B. Pharm</option>
-          <option value="M. Pharm">M. Pharm</option>
-          <option value="B. Pharm (Practice)">B. Pharm (Practice)</option>
-          <option value="PhD">PhD</option>
-        </select>
-      </div>
-      <div>
-        <label for="year-${degreeCount}" class="block text-sm font-medium text-gray-700 mb-1">Year of degree obtained *</label>
-        <input type="number" id="year-${degreeCount}" name="year[]" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-      </div>
-    `;
-
-    if (degreeCount > 0) {
-      const removeButton = document.createElement('button');
-      removeButton.textContent = 'Remove';
-      removeButton.className = 'mt-2 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300';
-      removeButton.onclick = function() {
-        degreeEntries.removeChild(entryDiv);
-      };
-      entryDiv.appendChild(removeButton);
-    }
-
-    degreeEntries.appendChild(entryDiv);
-    degreeCount++;
-  }
-
-  addDegreeEntry(); // Add initial degree entry
-  addDegreeButton.addEventListener('click', addDegreeEntry);
-
-  profilePictureInput.addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (file) {
-      if (file.size > 200 * 1024) {
-        alert('Image size must be less than 200KB');
-        event.target.value = '';
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        previewImage.src = e.target.result;
-        imagePreview.classList.remove('hidden');
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  form.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(form);
-
-    fetch('alumni-form-handler.php', {
-      method: 'POST',
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log("This is the form data :", data);
-        if (data.status === 'success') {
-          alert(data.message);
-          form.reset(); // Optionally reset the form
-        } else {
-          alert(data.message);
+      function addDegreeEntry() {
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'degree-entry grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 fade-in';
+        entryDiv.innerHTML = `
+                    <div>
+                        <label for="degree-${degreeCount}" class="block text-sm font-medium text-gray-700 mb-1">Degree obtained *</label>
+                        <select id="degree-${degreeCount}" name="degree-${degreeCount}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Select a degree</option>
+                            <option value="B. Pharm">B. Pharm</option>
+                            <option value="M. Pharm">M. Pharm</option>
+                            <option value="B. Pharm (Practice)">B. Pharm (Practice)</option>
+                            <option value="PhD">PhD</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="year-${degreeCount}" class="block text-sm font-medium text-gray-700 mb-1">Year of degree obtained *</label>
+                        <input type="number" id="year-${degreeCount}" name="year-${degreeCount}" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                `;
+        if (degreeCount > 0) {
+          const removeButton = document.createElement('button');
+          removeButton.textContent = 'Remove';
+          removeButton.className = 'mt-2 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300';
+          removeButton.onclick = function () {
+            degreeEntries.removeChild(entryDiv);
+          };
+          entryDiv.appendChild(removeButton);
         }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while submitting the form.');
+        degreeEntries.appendChild(entryDiv);
+        degreeCount++;
+      }
+
+      addDegreeEntry(); // Add initial degree entry
+      addDegreeButton.addEventListener('click', addDegreeEntry);
+
+      profilePictureInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          if (file.size > 200 * 1024) {
+            alert('Image size must be less than 200KB');
+            event.target.value = '';
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            previewImage.src = e.target.result;
+            imagePreview.classList.remove('hidden');
+          }
+          reader.readAsDataURL(file);
+        }
       });
-  });
-});
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        // Here you would typically send the form data to your server
+        console.log('Form submitted');
+        alert('Form submitted successfully!');
+      });
+    });
   </script>
 
   <!-- Footer -->
