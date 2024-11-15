@@ -1,12 +1,33 @@
+<!-- Whenever you want to make a new page, this page will act as a template for the 
+ default navbar and the footer for any page in this website 😄 -->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alumni Directory</title>
+  <title>Page starter template</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Nav and footer css and js  -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+  </style>
+
+
+
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
@@ -40,6 +61,7 @@
 </head>
 
 <body class="bg-gray-100">
+
   <nav class="sticky top-0 z-50 bg-navy py-3 px-6 shadow-lg">
     <div class="container mx-auto flex flex-wrap items-center justify-between">
       <!-- Logo and Title -->
@@ -112,94 +134,6 @@
       </div>
     </div>
   </nav>
-  <div class="container mx-auto mt-6 mb-6">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-        <select id="year-filter" class="w-full md:w-48 p-2 border rounded mb-4 md:mb-0" aria-label="Select Year">
-            <option value="">Select Year</option>
-        </select>
-        <div class="flex w-full md:w-auto">
-            <input id="search-input" type="text" placeholder="Search alumni..." class="w-full md:w-64 p-2 border rounded-l">
-            <button id="search-button" class="bg-blue-500 text-white px-4 py-2 rounded-r">Search</button>
-        </div>
-    </div>
-
-    <div id="alumni-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <!-- Alumni cards will be dynamically inserted here -->
-    </div>
-</div>
-
-<script>
-    const alumniGrid = document.getElementById('alumni-grid');
-    const yearFilter = document.getElementById('year-filter');
-    const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
-
-    // Function to create alumni card
-    function createAlumniCard(alumni) {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-lg shadow-md overflow-hidden cursor-pointer';
-        card.innerHTML = `
-            <img src="${alumni.profile_picture}" alt="${alumni.full_name}" class="w-full h-48 object-cover">
-            <div class="p-4">
-                <h3 class="font-bold text-lg">${alumni.full_name}</h3>
-                <p class="text-gray-600">${alumni.degree} (${alumni.year})</p>
-                <p class="text-sm text-gray-500">${alumni.job_title} at ${alumni.company}</p>
-            </div>
-        `;
-        card.addEventListener('click', () => {
-            window.location.href = `alumni-details.html?alumni_id=${alumni.alumni_id}`;
-        });
-        return card;
-    }
-
-    // Fetch and display alumni data
-    async function fetchAlumni() {
-        try {
-            const response = await fetch('fetch_alumni.php');
-            const data = await response.json();
-            alumniGrid.innerHTML = ''; // Clear existing data
-
-            // Populate year filter
-            const years = new Set(data.map(alumni => alumni.year));
-            years.forEach(year => {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = year;
-                yearFilter.appendChild(option);
-            });
-
-            // Display alumni cards
-            data.forEach(alumni => {
-                alumniGrid.appendChild(createAlumniCard(alumni));
-            });
-        } catch (error) {
-            console.error('Error fetching alumni data:', error);
-        }
-    }
-
-    // Search functionality
-    searchButton.addEventListener('click', () => {
-        const searchQuery = searchInput.value.toLowerCase();
-        const cards = Array.from(alumniGrid.children);
-        cards.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            card.style.display = text.includes(searchQuery) ? '' : 'none';
-        });
-    });
-
-    // Filter by year
-    yearFilter.addEventListener('change', () => {
-        const selectedYear = yearFilter.value;
-        const cards = Array.from(alumniGrid.children);
-        cards.forEach(card => {
-            const yearText = card.querySelector('p').textContent;
-            card.style.display = yearText.includes(selectedYear) || !selectedYear ? '' : 'none';
-        });
-    });
-
-    // Initial fetch
-    fetchAlumni();
-</script>
 
   <!-- Footer -->
   <div class="font-montserrat bg-antiquewhite">
@@ -305,8 +239,8 @@
       </div>
     </footer>
   </div>
-  <!--  -->
-  <!--  -->
+
+  <!-- Footer mobile responsiveness -->
   <script>
     // Toggle mobile menu
     document.getElementById('navbar-toggle').addEventListener('click', function () {

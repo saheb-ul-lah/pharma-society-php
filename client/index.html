@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Slider</title>
+  <title>Pharmaceutical Society- DU</title>
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
@@ -55,7 +55,7 @@
   /* Navbar links */
   .navbar-nav .nav-link {
     font-family: "Montserrat", sans-serif;
-    color: antiquewhite;
+    color: #fff;
     padding: 8px 15px;
     margin: 0 5px;
     transition: background-color 0.3s, color 0.3s;
@@ -128,29 +128,29 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="./index.html" onclick="setActiveLink(this)">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="./alumni.html" onclick="setActiveLink(this)">Alumni</a></li>
-          <li class="nav-item"><a class="nav-link" href="./students.html" onclick="setActiveLink(this)">Students</a>
+          <li class="nav-item"><a class="nav-link text-white" href="./index.html" onclick="setActiveLink(this)">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="./alumni.html" onclick="setActiveLink(this)">Alumni</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="./students.html" onclick="setActiveLink(this)">Students</a>
           </li>
-          <li class="nav-item"><a class="nav-link" href="./about.html" onclick="setActiveLink(this)">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="./news-events.html" onclick="setActiveLink(this)">News &
+          <li class="nav-item"><a class="nav-link text-white" href="./about.html" onclick="setActiveLink(this)">About</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="./news-events.html" onclick="setActiveLink(this)">News &
               events</a>
           </li>
           <!-- Conditionally render this link if the user is authenticated -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+            <a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">
               Forms
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="./alumni-form.html" onclick="setActiveLink(this)">Alumni Form</a></li>
-              <li><a class="dropdown-item" href="./student-form.html" onclick="setActiveLink(this)">Student Form</a>
+              <li><a class="dropdown-item text-white" href="./alumni-form.html" onclick="setActiveLink(this)">Alumni Form</a></li>
+              <li><a class="dropdown-item text-white" href="./student-form.html" onclick="setActiveLink(this)">Student Form</a>
               </li>
             </ul>
           </li>
-          <li class="nav-item"><a class="nav-link" href="./posts.html" onclick="setActiveLink(this)">Posts</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="./posts.html" onclick="setActiveLink(this)">Posts</a></li>
           <button class="auth-button ms-3" onclick="toggleAuth()">Join us</button>
-          <li class="nav-item"><a class="nav-link" href="./profile.html" onclick="setActiveLink(this)"><img
+          <li class="nav-item"><a class="nav-link " href="./profile.html" onclick="setActiveLink(this)"><img
                 style="position: absolute;top: 20px;right: 60px; height: 40px; width:40px; border-radius: 50%;"
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ-l3onxJrLVYB8Ak7aKCYcOznSKyaPz1P8Q&s"
                 alt="Profile pic"></a></li>
@@ -184,8 +184,12 @@
           src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="First slide">
         <div class="carousel-caption d-none d-md-block">
-          <h1 style="margin-bottom: 20px;">Welcome back <span id="username"></span>!</h1>
-          <p style="margin-bottom: 100px;">Pharmaceutical Society's Alumni & Students Association, DU</p>
+          <h1
+            style="margin-bottom: 20px; animation: fadeIn 2s; font-size: 50px; font-weight: 700; color: #fff; text-shadow: 2px 2px 3px #000;">
+            Welcome back <span id="username" style="color: #ff69b4;"></span>!</h1>
+          <p
+            style="margin-bottom: 100px; animation: fadeIn 2s; font-size: 25px; font-weight: 500; color: #fff; text-shadow: 2px 2px 3px #000;">
+            Pharmaceutical Society's Alumni & Students Association, DU</p>
         </div>
       </div>
       <!-- 3rd slide-->
@@ -212,7 +216,7 @@
   </div>
 
 
-  <iframe src="./includes/marquee.html" width="100%"  frameborder="0"></iframe>
+  <iframe src="./includes/marquee.html" width="100%" frameborder="0"></iframe>
 
   <!-- About and notifications -->
   <section class="container mt-5 mb-5">
