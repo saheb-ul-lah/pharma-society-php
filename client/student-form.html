@@ -42,18 +42,19 @@
             display: flex;
             flex-direction: column;
         }
+
         form {
-                width: 60vw;
-                margin-left: 18vw;
-            }
+            width: 60vw;
+            margin-left: 18vw;
+        }
+
         @media only screen and (max-width: 600px) {
             form {
                 width: 95vw;
                 margin-left: 1vw;
-                
+
             }
         }
-
     </style>
 </head>
 
@@ -134,27 +135,30 @@
     </nav>
 
     <!-- Form Content -->
-    <div id="app" class="w-full max-w-2xl  pl-[1vw] pt-6">
+    <div id="app" class="w-full max-w-2xl pl-[1vw] pt-6">
         <div id="formContainer" class="w-full">
-            <form id="studentForm" class="bg-white shadow-2xl rounded-lg px-8 pt-6 pb-8 mb-4">
-                <h1 class="text-2xl font-bold mb-6 text-center text-gray-800 border-b-2 border-blue-500 pb-2">Pharmaceutical Society Student
-                    Registration Form</h1>
+            <form id="studentForm" class="bg-white shadow-2xl rounded-lg px-8 pt-6 pb-8 mb-4" method="POST"
+                enctype="multipart/form-data">
+                <h1 class="text-2xl font-bold mb-6 text-center text-gray-800 border-b-2 border-blue-500 pb-2">
+                    Pharmaceutical Society Student Registration Form
+                </h1>
                 <p class="mb-8 text-center text-gray-600">Please fill out the form with your information.</p>
                 <section class="mb-8">
                     <h2 class="text-2xl font-semibold mb-4 text-blue-600">Personal Information</h2>
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="fullName">Full Name *</label>
-                        <input id="fullName" type="text" placeholder="Enter your full name" required
+                        <input id="fullName" type="text" name="fullName" placeholder="Enter your full name" required
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
                     </div>
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email *</label>
-                        <input id="email" type="email" placeholder="Enter your email address" required
+                        <input id="email" type="email" name="email" placeholder="Enter your email address" required
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
                     </div>
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Phone Number *</label>
-                        <input id="phone" type="tel" placeholder="Enter your phone number" required
+                        <input id="phone" type="tel" name="phone" placeholder="Enter your phone number" required
+                            pattern="[0-9]{10}" title="Please enter a 10-digit phone number"
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
                     </div>
                 </section>
@@ -162,7 +166,7 @@
                     <h2 class="text-2xl font-semibold mb-4 text-blue-600">Course Information</h2>
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="course">Course Enrolled *</label>
-                        <select id="course" required
+                        <select id="course" name="course" required
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
                             <option value="">Select a course</option>
                             <option value="B. Pharm">B. Pharm</option>
@@ -179,6 +183,81 @@
             </form>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("studentForm");
+            const submitButton = document.getElementById("submitButton");
+
+            // Toast function to show messages
+            function showToast(message, type = 'success') {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    className: type === 'success' ? 'bg-green-500' : 'bg-red-500'
+                }).showToast();
+            }
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Client-side validation
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const course = document.getElementById('course').value;
+
+                // Basic validation
+                if (!fullName || !email || !phone || !course) {
+                    showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                // Phone number validation
+                const phoneRegex = /^[0-9]{10}$/;
+                if (!phoneRegex.test(phone)) {
+                    showToast('Please enter a valid 10-digit phone number', 'error');
+                    return;
+                }
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showToast('Please enter a valid email address', 'error');
+                    return;
+                }
+
+                // Create FormData object
+                const formData = new FormData(form);
+
+                // Send form data using Fetch API
+                fetch('student-form-handler.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showToast(data.message);
+                            form.reset(); // Reset the form
+                            // Optional: Redirect after successful submission
+                            // window.location.href = 'index.html';
+                        } else {
+                            showToast(data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('An error occurred while submitting the form', 'error');
+                    });
+            });
+        });
+    </script>
+
     <!-- Footer -->
     <div class="font-montserrat bg-antiquewhite">
         <footer class="text-center text-lg-start text-muted bg-antiquewhite overflow-hidden">
@@ -266,7 +345,7 @@
         </footer>
     </div>
     <!--  -->
-    <!--  -->
+    <!-- Navbar scripts -->
     <script>
         // Toggle mobile menu
         document.getElementById('navbar-toggle').addEventListener('click', function () {
@@ -294,34 +373,8 @@
             this.textContent = this.textContent.trim() === 'Join us' ? 'Log Out' : 'Join us';
         });
     </script>
-    <!--  -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const submitButton = document.getElementById("submitButton");
-            const formContainer = document.getElementById("formContainer");
 
-            // Toast function to show messages
-            function showToast(message, bgColor = "#4caf50") {
-                Toastify({
-                    text: message,
-                    duration: 3000,
-                    gravity: "top",
-                    position: "right",
-                    backgroundColor: bgColor,
-                }).showToast();
-            }
 
-            submitButton.addEventListener("click", function (e) {
-                e.preventDefault();
-
-                // Simulate form submission
-                showToast("Form submitted successfully!", "#4caf50");
-
-                // Hide the form and show a message
-                formContainer.innerHTML = '<h2 class="text-3xl font-bold text-center text-gray-800">Thank you for submitting your details!</h2>';
-            });
-        });
-    </script>
 </body>
 
 </html>
