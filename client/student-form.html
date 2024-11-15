@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alumni Directory</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Student Registration Form</title>
+
+
     <!-- Nav and footer css and js  -->
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
@@ -33,133 +34,151 @@
         }
     </script>
     <style>
-        *{
-          font-family: montserrat;
+        * {
+            font-family: montserrat;
         }
-      </style>
 
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        form {
+                width: 60vw;
+                margin-left: 18vw;
+            }
+        @media only screen and (max-width: 600px) {
+            form {
+                width: 95vw;
+                margin-left: 1vw;
+                
+            }
+        }
+
+    </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen ">
+    <!-- Navbar -->
     <nav class="sticky top-0 z-50 bg-navy py-3 px-6 shadow-lg">
         <div class="container mx-auto flex flex-wrap items-center justify-between">
-          <!-- Logo and Title -->
-          <a href="./index.html" class="flex items-center">
-            <img src="https://ccsaalumni.in/static/media/du.ac81f37e7c52c0eb3d53.png" alt="DU Logo"
-              class="w-12 h-12 rounded-full mr-3">
-            <span class="text-xl text-antique-white font-bold">Pharmaceutical Society</span>
-          </a>
-    
-          <!-- Navbar Toggle for Mobile -->
-          <button id="navbar-toggle" class="lg:hidden text-antique-white">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-            </svg>
-          </button>
-    
-          <!-- Navbar Menu -->
-          <div id="navbar-menu" class="hidden lg:flex lg:items-center w-full lg:w-auto mt-4 lg:mt-0">
-            <ul class="flex flex-col lg:flex-row lg:ml-auto space-x-4 items-center">
-              <li><a href="./index.html"
-                  class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Home</a>
-              </li>
-              <li><a href="./alumni.html"
-                  class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Alumni</a>
-              </li>
-              <li><a href="./student.html"
-                  class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Students</a>
-              </li>
-              <li><a href="./about.html"
-                  class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">About</a>
-              </li>
-              <li><a href="./news-events.html"
-                  class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">News
-                  and Events</a></li>
-    
-              <!-- Dropdown Menu for Forms -->
-              <li class="relative group">
-                <a href="#"
-                  class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Register</a>
-                <ul class="absolute hidden group-hover:block bg-navy mt-1 rounded-md shadow-lg">
-                  <li><a style="text-wrap: nowrap;" href="./alumni-form.html"
-                      class="block px-4 py-2 text-antique-white hover:bg-blue-600 hover:text-yellow-300 transition duration-300 ease-in-out">Alumni
-                      Form</a></li>
-                  <li><a style="text-wrap: nowrap;" href="./student-form.html"
-                      class="block px-4 py-2 text-antique-white hover:bg-blue-600 hover:text-yellow-300 transition duration-300 ease-in-out">Student
-                      Form</a></li>
-                </ul>
-              </li>
-    
-              <li><a href="./posts.html"
-                  class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Posts</a>
-              </li>
-    
-              <!-- Profile Image -->
-              <li class="ml-auto">
-                <a href="./profile.html" class="flex items-center">
-                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ-l3onxJrLVYB8Ak7aKCYcOznSKyaPz1P8Q&s"
-                    alt="Profile Image"
-                    class="w-10 h-10 rounded-full border-2 border-white hover:border-yellow-300 transition duration-300 ease-in-out">
-                </a>
-              </li>
-            </ul>
-    
-            <!-- Join Us Button -->
-            <button id="auth-button"
-              class="ml-4 bg-button-red text-antique-white px-6 py-2 rounded-full transition duration-300 ease-in-out hover:bg-button-red-hover">
-              Join us
+            <!-- Logo and Title -->
+            <a href="./index.html" class="flex items-center">
+                <img src="https://ccsaalumni.in/static/media/du.ac81f37e7c52c0eb3d53.png" alt="DU Logo"
+                    class="w-12 h-12 rounded-full mr-3">
+                <span class="text-xl text-antique-white font-bold">Pharmaceutical Society</span>
+            </a>
+
+            <!-- Navbar Toggle for Mobile -->
+            <button id="navbar-toggle" class="lg:hidden text-antique-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
             </button>
-          </div>
-        </div>
-      </nav>
-    <div class="container mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-            <select class="w-full md:w-48 p-2 border rounded mb-4 md:mb-0" aria-label="Select Year">
-                <option>Select Year</option>
-                <!-- Add more options dynamically -->
-            </select>
-            <div class="flex w-full md:w-auto">
-                <input type="text" placeholder="Search alumni..." class="w-full md:w-64 p-2 border rounded-l">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-r">Search</button>
+
+            <!-- Navbar Menu -->
+            <div id="navbar-menu" class="hidden lg:flex lg:items-center w-full lg:w-auto mt-4 lg:mt-0">
+                <ul class="flex flex-col lg:flex-row lg:ml-auto space-x-4 items-center">
+                    <li><a href="./index.html"
+                            class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Home</a>
+                    </li>
+                    <li><a href="./alumni.html"
+                            class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Alumni</a>
+                    </li>
+                    <li><a href="./student.html"
+                            class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Students</a>
+                    </li>
+                    <li><a href="./about.html"
+                            class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">About</a>
+                    </li>
+                    <li><a href="./news-events.html"
+                            class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">News
+                            and Events</a></li>
+
+                    <!-- Dropdown Menu for Forms -->
+                    <li class="relative group">
+                        <a href="#"
+                            class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Register</a>
+                        <ul class="absolute hidden group-hover:block bg-navy mt-1 rounded-md shadow-lg">
+                            <li><a style="text-wrap: nowrap;" href="./alumni-form.html"
+                                    class="block px-4 py-2 text-antique-white hover:bg-blue-600 hover:text-yellow-300 transition duration-300 ease-in-out">Alumni
+                                    Form</a></li>
+                            <li><a style="text-wrap: nowrap;" href="./student-form.html"
+                                    class="block px-4 py-2 text-antique-white hover:bg-blue-600 hover:text-yellow-300 transition duration-300 ease-in-out">Student
+                                    Form</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="./posts.html"
+                            class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Posts</a>
+                    </li>
+
+                    <!-- Profile Image -->
+                    <li class="ml-auto">
+                        <a href="./profile.html" class="flex items-center">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ-l3onxJrLVYB8Ak7aKCYcOznSKyaPz1P8Q&s"
+                                alt="Profile Image"
+                                class="w-10 h-10 rounded-full border-2 border-white hover:border-yellow-300 transition duration-300 ease-in-out">
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Join Us Button -->
+                <button id="auth-button"
+                    class="ml-4 bg-button-red text-antique-white px-6 py-2 rounded-full transition duration-300 ease-in-out hover:bg-button-red-hover">
+                    Join us
+                </button>
             </div>
         </div>
+    </nav>
 
-        <div id="alumni-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <!-- Alumni cards will be dynamically inserted here -->
+    <!-- Form Content -->
+    <div id="app" class="w-full max-w-2xl  pl-[1vw] pt-6">
+        <div id="formContainer" class="w-full">
+            <form id="studentForm" class="bg-white shadow-2xl rounded-lg px-8 pt-6 pb-8 mb-4">
+                <h1 class="text-3xl font-bold mb-6 text-center text-gray-800 border-b-2 border-blue-500 pb-2">Student
+                    Registration Form</h1>
+                <p class="mb-8 text-center text-gray-600">Please fill out the form with your information.</p>
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold mb-4 text-blue-600">Personal Information</h2>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="fullName">Full Name *</label>
+                        <input id="fullName" type="text" placeholder="Enter your full name" required
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email *</label>
+                        <input id="email" type="email" placeholder="Enter your email address" required
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Phone Number *</label>
+                        <input id="phone" type="tel" placeholder="Enter your phone number" required
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
+                    </div>
+                </section>
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold mb-4 text-blue-600">Course Information</h2>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="course">Course Enrolled *</label>
+                        <select id="course" required
+                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
+                            <option value="">Select a course</option>
+                            <option value="B. Pharm">B. Pharm</option>
+                            <option value="M. Pharm">M. Pharm</option>
+                            <option value="B. Pharm (Practice)">B. Pharm (Practice)</option>
+                            <option value="PhD">PhD</option>
+                        </select>
+                    </div>
+                </section>
+                <div class="flex items-center justify-center">
+                    <button id="submitButton" type="submit"
+                        class="bg-button-red text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out hover:bg-button-red-hover">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <script>
-        // Sample data - replace with your actual data source
-        const alumniData = [
-            { name: "John Doe", title: "Software Engineer", year: "2021", image: "https://placeholder.com/150" },
-            { name: "Jane Smith", title: "Data Scientist", year: "2020", image: "https://placeholder.com/150" },
-            // Add more alumni data as needed
-        ];
-
-        const alumniGrid = document.getElementById('alumni-grid');
-
-        // Function to create alumni card
-        function createAlumniCard(alumni) {
-            const card = document.createElement('div');
-            card.className = 'bg-white rounded-lg shadow-md overflow-hidden';
-            card.innerHTML = `
-                <img src="${alumni.image}" alt="${alumni.name}" class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h3 class="font-bold text-lg">${alumni.name}</h3>
-                    <p class="text-gray-600">${alumni.title}</p>
-                    <p class="text-sm text-gray-500">Year of Graduation: ${alumni.year}</p>
-                </div>
-            `;
-            return card;
-        }
-
-        // Populate alumni grid
-        alumniData.forEach(alumni => {
-            alumniGrid.appendChild(createAlumniCard(alumni));
-        });
-    </script>
-
     <!-- Footer -->
     <div class="font-montserrat bg-antiquewhite">
         <footer class="text-center text-lg-start text-muted bg-antiquewhite overflow-hidden">
@@ -276,6 +295,33 @@
         });
     </script>
     <!--  -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const submitButton = document.getElementById("submitButton");
+            const formContainer = document.getElementById("formContainer");
+
+            // Toast function to show messages
+            function showToast(message, bgColor = "#4caf50") {
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: bgColor,
+                }).showToast();
+            }
+
+            submitButton.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                // Simulate form submission
+                showToast("Form submitted successfully!", "#4caf50");
+
+                // Hide the form and show a message
+                formContainer.innerHTML = '<h2 class="text-3xl font-bold text-center text-gray-800">Thank you for submitting your details!</h2>';
+            });
+        });
+    </script>
 </body>
 
 </html>
