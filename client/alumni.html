@@ -112,94 +112,147 @@
       </div>
     </div>
   </nav>
+
   <div class="container mx-auto mt-6 mb-6">
     <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-        <select id="year-filter" class="w-full md:w-48 p-2 border rounded mb-4 md:mb-0" aria-label="Select Year">
-            <option value="">Select Year</option>
-        </select>
-        <div class="flex w-full md:w-auto">
-            <input id="search-input" type="text" placeholder="Search alumni..." class="w-full md:w-64 p-2 border rounded-l">
-            <button id="search-button" class="bg-blue-500 text-white px-4 py-2 rounded-r">Search</button>
-        </div>
+      <select id="year-filter" class="w-full md:w-48 p-2 border rounded mb-4 md:mb-0" aria-label="Select Year">
+        <option value="">Select Year</option>
+      </select>
+      <select id="degree-filter" class="w-full md:w-48 p-2 border rounded mb-4 md:mb-0" aria-label="Select Degree">
+        <option value="">Select Degree</option>
+      </select>
+      <div class="flex w-full md:w-auto">
+        <input id="search-input" type="text" placeholder="Search alumni..." class="w-full md:w-64 p-2 border rounded-l">
+        <button id="search-button" class="bg-blue-500 text-white px-4 py-2 rounded-r">Search</button>
+      </div>
     </div>
 
     <div id="alumni-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <!-- Alumni cards will be dynamically inserted here -->
+      <!-- Alumni cards will be dynamically inserted here -->
     </div>
-</div>
+  </div>
 
-<script>
+  <script>
     const alumniGrid = document.getElementById('alumni-grid');
     const yearFilter = document.getElementById('year-filter');
+    const degreeFilter = document.getElementById('degree-filter');
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
 
-    // Function to create alumni card
+    function createDegreeTag(degree, year) {
+      const tag = document.createElement('span');
+      tag.className = 'text-xs bg-blue-500 text-white px-2 py-1 rounded-lg mr-2 mt-1 inline-block';
+      tag.textContent = `${degree} (${year})`;
+      return tag;
+    }
+
     function createAlumniCard(alumni) {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-lg shadow-md overflow-hidden cursor-pointer';
-        card.innerHTML = `
-            <img src="${alumni.profile_picture}" alt="${alumni.full_name}" class="w-full h-48 object-cover">
-            <div class="p-4">
-                <h3 class="font-bold text-lg">${alumni.full_name}</h3>
-                <p class="text-gray-600">${alumni.degree} (${alumni.year})</p>
-                <p class="text-sm text-gray-500">${alumni.job_title} at ${alumni.company}</p>
+      const card = document.createElement('div');
+      card.className = 'bg-white rounded-lg shadow-md overflow-hidden cursor-pointer';
+
+      const degrees = alumni.degrees.split(', ');
+      const years = alumni.years.split(', ');
+      const degreeTags = document.createElement('div');
+      degreeTags.className = 'mt-3';
+      degrees.forEach((degree, index) => {
+        degreeTags.appendChild(createDegreeTag(degree, years[index]));
+      });
+
+      card.innerHTML = `
+        <img src="${alumni.profile_picture}" alt="${alumni.full_name}" class="w-full h-48 object-cover">
+        <div class="p-4">
+            <h3 class="font-bold text-lg">${alumni.full_name}</h3>
+            <p class="text-gray-600">${alumni.email}</p>
+            <p class="text-gray-600">${alumni.phone}</p>
+            <p class="text-sm text-gray-500">${alumni.job_title} at ${alumni.company}</p>
+            <p class="text-sm text-gray-500">${alumni.company_location}</p>
+            <div class="mt-2 text-sm">
+                <a href="${alumni.linkedin}" target="_blank" class="text-blue-500 hover:underline">LinkedIn</a> | 
+                <a href="${alumni.twitter}" target="_blank" class="text-blue-500 hover:underline">Twitter</a> | 
+                <a href="${alumni.facebook}" target="_blank" class="text-blue-500 hover:underline">Facebook</a>
             </div>
-        `;
-        card.addEventListener('click', () => {
-            window.location.href = `alumni-details.html?alumni_id=${alumni.alumni_id}`;
-        });
-        return card;
+        </div>
+      `;
+
+      card.querySelector('.p-4').appendChild(degreeTags);
+
+      card.addEventListener('click', () => {
+        window.location.href = `alumni-details.html?alumni_id=${alumni.alumni_id}`;
+      });
+
+      return card;
     }
 
-    // Fetch and display alumni data
     async function fetchAlumni() {
-        try {
-            const response = await fetch('fetch_alumni.php');
-            const data = await response.json();
-            alumniGrid.innerHTML = ''; // Clear existing data
+      try {
+        const response = await fetch('fetch_alumni.php');
+        const data = await response.json();
+        alumniGrid.innerHTML = '';
 
-            // Populate year filter
-            const years = new Set(data.map(alumni => alumni.year));
-            years.forEach(year => {
-                const option = document.createElement('option');
-                option.value = year;
-                option.textContent = year;
-                yearFilter.appendChild(option);
-            });
+        const years = new Set();
+        const degrees = new Set();
 
-            // Display alumni cards
-            data.forEach(alumni => {
-                alumniGrid.appendChild(createAlumniCard(alumni));
-            });
-        } catch (error) {
-            console.error('Error fetching alumni data:', error);
-        }
+        data.forEach(alumni => {
+          alumni.years.split(', ').forEach(year => years.add(year));
+          alumni.degrees.split(', ').forEach(degree => degrees.add(degree));
+        });
+
+        years.forEach(year => {
+          const option = document.createElement('option');
+          option.value = year;
+          option.textContent = year;
+          yearFilter.appendChild(option);
+        });
+
+        degrees.forEach(degree => {
+          const option = document.createElement('option');
+          option.value = degree;
+          option.textContent = degree;
+          degreeFilter.appendChild(option);
+        });
+
+        data.forEach(alumni => {
+          alumniGrid.appendChild(createAlumniCard(alumni));
+        });
+      } catch (error) {
+        console.error('Error fetching alumni data:', error);
+      }
     }
 
-    // Search functionality
+    searchInput.addEventListener('input', () => {
+      filterCards();
+    });
+
     searchButton.addEventListener('click', () => {
-        const searchQuery = searchInput.value.toLowerCase();
-        const cards = Array.from(alumniGrid.children);
-        cards.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            card.style.display = text.includes(searchQuery) ? '' : 'none';
-        });
+      filterCards();
     });
 
-    // Filter by year
     yearFilter.addEventListener('change', () => {
-        const selectedYear = yearFilter.value;
-        const cards = Array.from(alumniGrid.children);
-        cards.forEach(card => {
-            const yearText = card.querySelector('p').textContent;
-            card.style.display = yearText.includes(selectedYear) || !selectedYear ? '' : 'none';
-        });
+      filterCards();
     });
 
-    // Initial fetch
+    degreeFilter.addEventListener('change', () => {
+      filterCards();
+    });
+
+    function filterCards() {
+      const searchQuery = searchInput.value.toLowerCase();
+      const selectedYear = yearFilter.value;
+      const selectedDegree = degreeFilter.value;
+      const cards = Array.from(alumniGrid.children);
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const yearText = Array.from(card.querySelectorAll('.text-xs')).map(e => e.textContent).join(' ');
+        const degreeText = yearText;
+        const yearMatch = yearText.includes(selectedYear) || selectedYear === '';
+        const degreeMatch = degreeText.includes(selectedDegree) || selectedDegree === '';
+        const searchMatch = text.includes(searchQuery);
+        card.style.display = (yearMatch && degreeMatch && searchMatch) ? '' : 'none';
+      });
+    }
+
     fetchAlumni();
-</script>
+  </script>
 
   <!-- Footer -->
   <div class="font-montserrat bg-antiquewhite">
