@@ -36,8 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     $phone = sanitizeInput($_POST['phone']);
     $course = sanitizeInput($_POST['course']);
-    $dob = sanitizeInput($_POST['dob']);
-    $yearOfAdmission = sanitizeInput($_POST['yearOfAdmission']);
 
     // Validate inputs
     $errors = [];
@@ -56,14 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($course)) {
         $errors[] = "Course selection is required";
-    }
-
-    if (empty($dob)) {
-        $errors[] = "Date of birth is required";
-    }
-
-    if (empty($yearOfAdmission)) {
-        $errors[] = "Year of admission is required";
     }
 
     // Handle the profile picture upload
@@ -110,8 +100,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare SQL statement to prevent SQL injection
-    $stmt = $conn->prepare("INSERT INTO student_registration (full_name, email, phone, course, dob, year_of_admission, profile_pic) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssss", $fullName, $email, $phone, $course, $dob, $yearOfAdmission, $profilePicPath);
+    $stmt = $conn->prepare("INSERT INTO student_registration (full_name, email, phone, course, profile_pic) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $fullName, $email, $phone, $course, $profilePicPath);
 
     // Execute the statement
     if ($stmt->execute()) {

@@ -56,8 +56,6 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 
 <body class="bg-gradient-to-r from-blue-100 to-purple-100 min-h-screen ">
@@ -153,12 +151,7 @@
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
                     </div>
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="dob">Date of Birth *</label>
-                        <input id="dob" type="date" name="dob" required
-                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email * [Note: Email can't be changed in future]</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email *</label>
                         <input id="email" type="email" name="email" placeholder="Enter your email address" required
                             class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
                     </div>
@@ -182,13 +175,6 @@
                             <option value="PhD">PhD</option>
                         </select>
                     </div>
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="yearOfAdmission">Year of
-                            Admission *</label>
-                        <input id="yearOfAdmission" type="number" name="yearOfAdmission"
-                            placeholder="Enter year of admission" required
-                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
-                    </div>
                 </section>
 
                 <!-- Profile Picture -->
@@ -204,8 +190,7 @@
 
                 <div class="flex items-center justify-center">
                     <button id="submitButton" type="submit"
-                        class="bg-button-red text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out hover:bg-button-red-hover">Submit
-                    </button>
+                        class="bg-button-red text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out hover:bg-button-red-hover">Submit</button>
                 </div>
             </form>
         </div>
@@ -225,16 +210,7 @@
                     duration: 3000,
                     gravity: "top",
                     position: "right",
-                    className: type === 'success' ? 'bg-green-500' : 'bg-red-500',
-                    close: true,
-                    style: {
-                        background: type === 'success' ? 'green' : 'red',
-                        borderRadius: '10px',
-                        padding: '10px',
-                        color: 'white',
-                        textAlign: 'center',
-                        fontSize: '16px'
-                    }
+                    className: type === 'success' ? 'bg-green-500' : 'bg-red-500'
                 }).showToast();
             }
 
@@ -245,12 +221,10 @@
                 const email = document.getElementById('email').value.trim();
                 const phone = document.getElementById('phone').value.trim();
                 const course = document.getElementById('course').value;
-                const dob = document.getElementById('dob').value;
-                const yearOfAdmission = document.getElementById('yearOfAdmission').value;
                 const profilePic = document.getElementById('profilePic').files[0];
 
                 // Basic validation
-                if (!fullName || !email || !phone || !course || !dob || !yearOfAdmission) {
+                if (!fullName || !email || !phone || !course) {
                     showToast('Please fill in all required fields', 'error');
                     return;
                 }

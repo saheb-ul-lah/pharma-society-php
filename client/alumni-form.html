@@ -260,6 +260,9 @@
     </form>
   </div>
 
+  <!-- Add this HTML structure for the toast container -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const form = document.getElementById('registrationForm');
@@ -312,7 +315,7 @@
         const file = event.target.files[0];
         if (file) {
           if (file.size > 200 * 1024) {
-            alert('Image size must be less than 200KB');
+            showToast('Error', 'Image size must be less than 200KB', 'error');
             event.target.value = '';
             return;
           }
@@ -338,18 +341,42 @@
           .then(data => {
             console.log("This is the form data :", data);
             if (data.status === 'success') {
-              alert(data.message);
+              showToast('Success', data.message, 'success');
               form.reset(); // Optionally reset the form
             } else {
-              alert(data.message);
+              showToast('Error', data.message, 'error');
             }
           })
           .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while submitting the form.');
+            showToast('Error', 'An error occurred while submitting the form.', 'error');
           });
       });
     });
+
+    function showToast(title, message, type) {
+      const toastContainer = document.getElementById('toastContainer');
+
+      const toast = document.createElement('div');
+      toast.className = `toast flex items-center justify-between ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white rounded-md p-4 shadow-lg`;
+      toast.innerHTML = `
+    <div>
+      <h2 class="text-lg font-bold">${title}</h2>
+      <p>${message}</p>
+    </div>
+    <button class="text-white ml-4">✖</button>
+  `;
+
+      // Add close button functionality
+      toast.querySelector('button').onclick = () => toast.remove();
+
+      toastContainer.appendChild(toast);
+
+      // Automatically remove the toast after 3 seconds
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
   </script>
 
   <!-- Footer -->
