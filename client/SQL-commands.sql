@@ -35,3 +35,26 @@ CREATE TABLE `student_registration` (
     `course` VARCHAR(100) NOT NULL,
     `submitted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+
+
+-- Posts and queries commands
+
+-- Create table for posts
+CREATE TABLE posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    author VARCHAR(100) NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL
+);
+
+-- Create table for queries
+CREATE TABLE queries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    author VARCHAR(100) NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL
+);

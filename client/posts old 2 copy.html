@@ -146,7 +146,7 @@
       </button>
     </div>
     <div id="posts-content" class="p-5">
-      <!-- Content dynamically inserted -->
+      <!-- Content will be dynamically inserted here -->
     </div>
     <button id="create-button"
       class="fixed bottom-8 right-8 bg-blue-500 text-white border-none rounded-full px-6 py-3 text-lg cursor-pointer flex items-center justify-center shadow-lg transition-all duration-300 hover:bg-blue-600 active:scale-95">
@@ -160,9 +160,9 @@
     <div class="bg-white p-8 rounded-2xl w-4/5 max-w-2xl shadow-2xl">
       <h2 id="form-title" class="text-2xl font-bold mb-4">Create a New Post</h2>
       <form id="create-form">
-        <input type="text" id="post-title" name="title" placeholder="Title"
+        <input type="text" id="post-title" placeholder="Title"
           class="w-full p-2 mb-4 rounded border border-gray-300 text-lg" required>
-        <textarea id="post-content" name="content" placeholder="Content"
+        <textarea id="post-content" placeholder="Content"
           class="w-full p-2 mb-4 rounded border border-gray-300 text-lg min-h-[150px] resize-vertical"
           required></textarea>
         <div class="flex justify-end gap-2">
@@ -176,6 +176,7 @@
   </div>
 
   <script>
+    const postsContainer = document.getElementById('posts-container');
     const postsContent = document.getElementById('posts-content');
     const alumniTab = document.getElementById('alumni-tab');
     const studentTab = document.getElementById('student-tab');
@@ -183,92 +184,71 @@
     const createFormOverlay = document.getElementById('create-form-overlay');
     const createForm = document.getElementById('create-form');
     const cancelButton = document.getElementById('cancel-button');
+    const formTitle = document.getElementById('form-title');
     const postTitleInput = document.getElementById('post-title');
     const postContentInput = document.getElementById('post-content');
-    const formTitle = document.getElementById('form-title');
 
     let activeTab = 'alumni';
+    let posts = [
+      { id: 1, author: 'John Doe', timestamp: '2 hours ago', title: 'My Alumni Experience', content: 'It was great!', likes: 5, comments: 3 },
+      { id: 2, author: 'Jane Smith', timestamp: '1 day ago', title: 'Career Advice', content: 'Here are some tips...', likes: 10, comments: 7 },
+    ];
+    let queries = [
+      { id: 1, author: 'Alice Brown', timestamp: '3 hours ago', title: 'Question about Admissions', content: 'How do I apply?', status: 'Open' },
+      { id: 2, author: 'Bob Green', timestamp: '2 days ago', title: 'Scholarship Information', content: 'Are there any available?', status: 'Closed' },
+    ];
 
-    function fetchPosts() {
-      fetch('posts_and_queries_manager.php?action=fetch&tab=' + activeTab)
-        .then(response => response.json())
-        .then(data => {
-          // Sort posts or queries by timestamp (latest to oldest)
-          data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-          renderPosts(data);
-        });
-    }
-
-
-    function renderPosts(items) {
-      if (items.length === 0) {
-        postsContent.innerHTML = `
-            <div class="text-center text-gray-500 p-5">
-                <p>No ${activeTab === 'alumni' ? 'posts' : 'queries'} available</p>
-            </div>
-        `;
-        return;
-      }
-
+    function renderPosts() {
+      const items = activeTab === 'alumni' ? posts : queries;
       postsContent.innerHTML = items.map(item => `
-        <div class="bg-white rounded-lg shadow-md p-5 mb-5">
-            <div class="flex items-center text-sm text-gray-600">
-                <strong>${item.author}</strong>
-                <span class="ml-2 text-gray-400">${new Date(item.timestamp).toLocaleString()}</span>
-            </div>
-            <h4 class="text-xl font-semibold my-2 text-gray-800">${item.title}</h4>
-            <p class="text-gray-700">${item.content}</p>
-            <div class="flex gap-2 mt-3">
-                <button class="edit-button bg-yellow-500 text-white px-4 py-2 rounded text-sm" data-id="${item.id}">Edit</button>
-                <button class="delete-button bg-red-500 text-white px-4 py-2 rounded text-sm" data-id="${item.id}">Delete</button>
-            </div>
+      <div class="bg-white rounded-lg shadow-md p-5 mb-5 transition-transform duration-200 hover:scale-[1.02] fade-in">
+        <div class="flex items-center text-sm text-gray-600">
+          <strong>${item.author}</strong>
+          <span class="ml-2 text-gray-400">${item.timestamp}</span>
         </div>
+        <h4 class="text-xl font-semibold my-2 text-gray-800">${item.title}</h4>
+        <p class="text-gray-700">${item.content}</p>
+        <div class="text-xs text-gray-500 mt-3 border-l-4 border-blue-500 pl-2">
+          ${activeTab === 'alumni'
+          ? `${item.likes} likes · ${item.comments} comments`
+          : `Status: ${item.status}`
+        }
+        </div>
+        <div class="flex gap-2 mt-3">
+          <button class="edit-button bg-yellow-500 text-white px-4 py-2 rounded text-sm" data-id="${item.id}">Edit</button>
+          <button class="delete-button bg-red-500 text-white px-4 py-2 rounded text-sm" data-id="${item.id}">Delete</button>
+        </div>
+      </div>
     `).join('');
-
       addListeners();
-    }
-
-
-    function addListeners() {
-      document.querySelectorAll('.delete-button').forEach(button => {
-        button.addEventListener('click', () => handleDelete(button.dataset.id));
-      });
-
-      document.querySelectorAll('.edit-button').forEach(button => {
-        button.addEventListener('click', () => showCreateForm(true, button.dataset.id));
-      });
     }
 
     function setActiveTab(tab) {
       activeTab = tab;
-      fetchPosts();
-
-      // Update active tab styles
-      if (tab === 'alumni') {
-        alumniTab.classList.add('bg-slate-300', 'text-grey', 'font-bold');
-        studentTab.classList.remove('bg-slate-300', 'text-grey', 'font-bold');
-        createButton.querySelector('span').textContent = 'Create your post';
-      } else {
-        studentTab.classList.add('bg-slate-300', 'text-grey', 'font-bold');
-        alumniTab.classList.remove('bg-slate-300', 'text-grey', 'font-bold');
-        createButton.querySelector('span').textContent = 'Create your query';
-      }
+      alumniTab.classList.toggle('bg-blue-500', tab === 'alumni');
+      alumniTab.classList.toggle('text-white', tab === 'alumni');
+      studentTab.classList.toggle('bg-blue-500', tab === 'student');
+      studentTab.classList.toggle('text-white', tab === 'student');
+      renderPosts();
+      updateCreateButton();
     }
 
+    function updateCreateButton() {
+      const icon = activeTab === 'alumni' ? 'fa-pen' : 'fa-question-circle';
+      const text = activeTab === 'alumni' ? 'Create your post' : 'Create your query';
+      createButton.innerHTML = `<i class="fas ${icon} mr-2"></i>${text}`;
+    }
 
     function showCreateForm(isEdit = false, id = null) {
       createFormOverlay.classList.remove('hidden');
-      if (isEdit) {
-        fetch(`posts_and_queries_manager.php?action=get&id=${id}&tab=${activeTab}`)
-          .then(response => response.json())
-          .then(data => {
-            postTitleInput.value = data.title;
-            postContentInput.value = data.content;
-            formTitle.textContent = 'Edit Post';
-            createForm.onsubmit = e => handleEdit(e, id);
-          });
+      if (isEdit && id !== null) {
+        const item = activeTab === 'alumni' ? posts.find(p => p.id == id) : queries.find(q => q.id == id);
+        postTitleInput.value = item.title;
+        postContentInput.value = item.content;
+        formTitle.textContent = 'Edit Post';
+        createForm.onsubmit = (e) => handleEdit(e, id);
       } else {
-        formTitle.textContent = 'Create New Post';
+        formTitle.textContent = activeTab === 'alumni' ? 'Create a New Post' : 'Ask a New Query';
         createForm.onsubmit = handleSubmit;
       }
     }
@@ -281,38 +261,59 @@
 
     function handleSubmit(e) {
       e.preventDefault();
-      const formData = new FormData(createForm);
-      formData.append('action', 'create');
-      formData.append('tab', activeTab);
+      const timestamp = new Date().toLocaleString();
+      const newItem = {
+        id: activeTab === 'alumni' ? posts.length + 1 : queries.length + 1,
+        author: 'Current User',
+        timestamp,
+        title: postTitleInput.value,
+        content: postContentInput.value,
+      };
 
-      fetch('posts_and_queries_manager.php', {
-        method: 'POST',
-        body: formData,
-      }).then(() => {
-        hideCreateForm();
-        fetchPosts();
-      });
+      if (activeTab === 'alumni') {
+        newItem.likes = 0;
+        newItem.comments = 0;
+        posts.unshift(newItem);
+      } else {
+        newItem.status = 'Open';
+        queries.unshift(newItem);
+      }
+
+      hideCreateForm();
+      renderPosts();
     }
 
     function handleEdit(e, id) {
       e.preventDefault();
-      const formData = new FormData(createForm);
-      formData.append('action', 'update');
-      formData.append('id', id);
-      formData.append('tab', activeTab);
-
-      fetch('posts_and_queries_manager.php', {
-        method: 'POST',
-        body: formData,
-      }).then(() => {
-        hideCreateForm();
-        fetchPosts();
-      });
+      const items = activeTab === 'alumni' ? posts : queries;
+      const index = items.findIndex(item => item.id == id);
+      if (index !== -1) {
+        items[index].title = postTitleInput.value;
+        items[index].content = postContentInput.value;
+      }
+      hideCreateForm();
+      renderPosts();
     }
 
     function handleDelete(id) {
-      fetch(`posts_and_queries_manager.php?action=delete&id=${id}&tab=${activeTab}`)
-        .then(() => fetchPosts());
+      if (activeTab === 'alumni') {
+        posts = posts.filter(post => post.id !== id);
+      } else {
+        queries = queries.filter(query => query.id !== id);
+      }
+      renderPosts();
+    }
+
+    function addListeners() {
+      const deleteButtons = document.querySelectorAll('.delete-button');
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', () => handleDelete(Number(button.dataset.id)));
+      });
+
+      const editButtons = document.querySelectorAll('.edit-button');
+      editButtons.forEach(button => {
+        button.addEventListener('click', () => showCreateForm(true, Number(button.dataset.id)));
+      });
     }
 
     alumniTab.addEventListener('click', () => setActiveTab('alumni'));
@@ -323,7 +324,6 @@
     // Initial render
     setActiveTab('alumni');
   </script>
-
 
 
   <!-- Footer -->
