@@ -449,7 +449,12 @@
           break;
         case "Alumni":
           content = `
-            <h1 class="text-3xl font-bold mb-6">Alumni Management</h1>
+            <h1 class=" absolute text-3xl font-bold mb-6">Alumni Management</h1>
+            <div class="mb-4 flex justify-end">
+                <button id="addQueryBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                    Validate all alumni
+                </button>
+            </div>
             ${renderTable(alumni, [
             { key: "full_name", label: "Full Name" },
             { key: "dob", label: "D.O.B" },
@@ -469,7 +474,12 @@
           break;
         case "Students":
           content = `
-            <h1 class="text-3xl font-bold mb-6">Student Management</h1>
+            <h1 class="absolute text-3xl font-bold mb-6">Student Management</h1>
+            <div class="mb-4 flex justify-end">
+                <button id="addQueryBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                    Validate all students
+                </button>
+            </div>
             ${renderTable(students, [
             { key: "full_name", label: "Full Name" },
             { key: "email", label: "Email" },
@@ -484,7 +494,12 @@
         case "Posts":
           content = `
         <div class="container mx-auto">
-            <h1 class="text-3xl font-bold mb-6">Posts Management</h1>
+            <h1 class="absolute text-3xl font-bold mb-6">Posts Management</h1>
+            <div class="mb-4 flex justify-end">
+                <button id="addPostBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                    Validate all posts 
+                </button>
+            </div>
             <div class="bg-white shadow-md rounded-lg">
                 <table class="min-w-full">
                     <thead>
@@ -501,7 +516,6 @@
                     </tbody>
                 </table>
             </div>
-            
         </div>
     `;
           setTimeout(() => fetchPostsAndQueries(), 0);
@@ -510,7 +524,12 @@
         case "Queries":
           content = `
         <div class="container mx-auto">
-            <h1 class="text-3xl font-bold mb-6">Queries Management</h1>
+            <h1 class="absolute text-3xl font-bold mb-6">Queries Management</h1>
+            <div class="mb-4 flex justify-end">
+                <button id="addQueryBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                    Validate all queries
+                </button>
+            </div>
             <div class="bg-white shadow-md rounded-lg">
                 <table class="min-w-full">
                     <thead>
