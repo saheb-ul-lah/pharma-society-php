@@ -17,26 +17,25 @@ $alumni_id = isset($_GET['alumni_id']) ? intval($_GET['alumni_id']) : 0;
 if ($alumni_id > 0) {
     $sql = "
         SELECT 
-            ar.full_name,
-            ar.dob,
-            ar.gender,
-            ar.email,
-            'Not for public display' AS phone,
-            ar.address,
-            ar.job_title AS currentJobTitle,
-            ar.company,
+            ar.full_name AS 'Full Name',
+            ar.dob AS 'Date of Birth',
+            ar.gender AS 'Gender',
+            ar.email AS 'Email',
+            ar.address AS 'Address',
+            ar.job_title AS 'Job Title',
+            ar.company AS 'Company',
             ar.linkedin,
             ar.twitter,
             ar.facebook,
             ar.profile_picture AS profileImage,
-            ad.degree AS degreeObtained,
-            ad.year AS yearOfGraduation
+            GROUP_CONCAT(CONCAT(ad.degree, ' (', ad.year, ')') SEPARATOR ', ') AS 'Degrees'
         FROM 
             alumni_registration ar
         INNER JOIN 
             alumni_degrees ad ON ar.id = ad.alumni_id
         WHERE 
-            ar.id = ?;
+            ar.id = ?
+        GROUP BY ar.id;
     ";
 
     $stmt = $conn->prepare($sql);

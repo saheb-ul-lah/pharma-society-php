@@ -24,7 +24,7 @@ if (!$student_id) {
 }
 
 // Fetch details of a specific student
-$sql = "SELECT id, full_name, email, phone, course, submitted_at, profile_pic, dob, year_of_admission 
+$sql = "SELECT id, full_name AS 'Full name', email, phone, course, submitted_at, profile_pic, dob, year_of_admission 
         FROM student_registration WHERE id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $student_id);

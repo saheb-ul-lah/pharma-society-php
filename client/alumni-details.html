@@ -114,7 +114,6 @@
       </div>
     </div>
   </nav>
-  
   <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
     <h1 class="text-2xl font-bold text-center py-4 bg-gray-200">Alumni Details</h1>
     <div class="flex flex-col md:flex-row">
@@ -143,9 +142,9 @@
       const detailDiv = document.createElement('div');
       detailDiv.className = 'bg-amber-50 p-2 rounded';
       detailDiv.innerHTML = `
-              <span class="font-semibold">${key.replace(/([A-Z])/g, ' $1').trim()}:</span>
-              <span class="ml-2">${value}</span>
-          `;
+    <span class="font-semibold">${key.replace(/([A-Z])/g, ' $1').trim()}:</span>
+    <span class="ml-2">${value}</span>
+  `;
       return detailDiv;
     }
 
@@ -170,9 +169,26 @@
 
         // Set profile image and links
         document.getElementById('profileImage').src = data.profileImage || 'https://via.placeholder.com/150';
-        document.getElementById('facebookLink').href = data.facebook || '#';
-        document.getElementById('twitterLink').href = data.twitter || '#';
-        document.getElementById('linkedinLink').href = data.linkedin || '#';
+        // document.getElementById('facebookLink').href = data.facebook || '#';
+        // document.getElementById('twitterLink').href = data.twitter || '#';
+        // document.getElementById('linkedinLink').href = data.linkedin || '#';
+
+        const socialLinks = [
+          { id: 'facebookLink', url: data.facebook },
+          { id: 'twitterLink', url: data.twitter },
+          { id: 'linkedinLink', url: data.linkedin }
+        ];
+
+        socialLinks.forEach(link => {
+          const element = document.getElementById(link.id);
+          if (link.url && link.url.trim() !== '#' && link.url.trim() !== '') {
+            element.href = link.url; // Set the link
+            element.style.display = 'inline-block'; // Ensure it's visible
+          } else {
+            element.style.display = 'none'; // Hide if the link is empty or "#"
+          }
+        });
+
 
         // Populate details
         const detailsContainer = document.getElementById('detailsContainer');
@@ -189,6 +205,7 @@
 
     // Fetch alumni details on page load
     fetchAlumniDetails();
+
   </script>
 
   <!-- Footer -->
