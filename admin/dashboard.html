@@ -188,13 +188,13 @@
 
     fetchStudentData();
 
-    const posts = [
+    let posts = [
       { id: 1, title: "First Blog Post", author: "John Doe", dateCreated: "2023-05-01" },
       { id: 2, title: "Upcoming Events", author: "Jane Smith", dateCreated: "2023-05-05" },
       { id: 3, title: "New Product Announcement", author: "Bob Johnson", dateCreated: "2023-05-10" },
     ];
 
-    const queries = [
+    let queries = [
       { id: 1, title: "Admission Query", author: "Prospective Student", dateCreated: "2023-05-15" },
       { id: 2, title: "Course Information", author: "Current Student", dateCreated: "2023-05-18" },
       { id: 3, title: "Alumni Event", author: "Alumni Member", dateCreated: "2023-05-20" },
@@ -315,8 +315,7 @@
                 <span class="text-xs text-gray-500">${notification.date}</span>
               </div>
               <div class="mt-2 flex justify-end">
-                <button class="text-sm text-blue-500 hover:text-blue-700 mr-2" onclick="toggleReadStatus(${notification.id})">
-                  Mark as ${notification.is_read ? "unread" : "read"}
+                
                 </button>
                 <button class="text-sm text-green-500 hover:text-green-700 mr-2" onclick="openNotificationModal(${notification.id})">
                   Edit
@@ -331,9 +330,6 @@
         <div class="mt-4 flex justify-between items-center">
           <button onclick="openNotificationModal()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
             Create New Notification
-          </button>
-          <button onclick="markAllAsRead()" class="text-gray-600 hover:text-gray-800">
-            Mark All as Read
           </button>
         </div>
       `;
@@ -484,26 +480,59 @@
           ], deleteStudent)}
           `;
           break;
+
         case "Posts":
           content = `
+        <div class="container mx-auto">
             <h1 class="text-3xl font-bold mb-6">Posts Management</h1>
-            ${renderTable(posts, [
-            { key: "title", label: "Title" },
-            { key: "author", label: "Author" },
-            { key: "dateCreated", label: "Date Created" },
-          ], deleteItem)}
-          `;
+            <div class="bg-white shadow-md rounded-lg">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-6 py-3 text-left text-sm font-semibold">ID</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Title</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Author</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Date Created</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="postsTableBody">
+                        <!-- Posts will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    `;
+          setTimeout(() => fetchPostsAndQueries(), 0);
           break;
+
         case "Queries":
           content = `
+        <div class="container mx-auto">
             <h1 class="text-3xl font-bold mb-6">Queries Management</h1>
-            ${renderTable(queries, [
-            { key: "title", label: "Title" },
-            { key: "author", label: "Author" },
-            { key: "dateCreated", label: "Date Created" },
-          ], deleteItem)}
-          `;
+            <div class="bg-white shadow-md rounded-lg">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-6 py-3 text-left text-sm font-semibold">ID</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Title</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Author</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Date Created</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="queriesTableBody">
+                        <!-- Queries will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    `;
+          setTimeout(() => fetchPostsAndQueries(), 0);
           break;
+
         case "Notifications":
           content = renderNotifications();
           break;
@@ -563,6 +592,112 @@
       fetchNotifications();
     });
 
+
+    // Exp starts
+
+    function fetchPostsAndQueries() {
+      console.log("Fetching posts and queries...");
+      fetch("fetch_posts_and_queries.php")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Received data:", data);
+          if (data.status === "success") {
+            const postsData = data.data.filter((item) => item.type === "post");
+            const queriesData = data.data.filter((item) => item.type === "query");
+            console.log("Posts data:", postsData);
+            console.log("Queries data:", queriesData);
+            renderPosts(postsData);
+            renderQueries(queriesData);
+          } else {
+            console.error("Error fetching posts and queries:", data.message);
+          }
+        })
+        .catch((error) => console.error("Error:", error));
+    }
+
+    function renderPosts(posts) {
+      console.log("Rendering posts:", posts);
+      const postsTableBody = document.getElementById("postsTableBody");
+      if (!postsTableBody) {
+        console.error("Posts table body element not found!");
+        return;
+      }
+      postsTableBody.innerHTML = posts
+        .map(
+          (post) => `
+        <tr>
+          <td class="p-3">${post.id}</td>
+          <td class="p-3">${post.title}</td>
+          <td class="p-3">${post.author}</td>
+          <td class="p-3">${post.timestamp}</td>
+          <td class="p-3">
+            <button class="text-red-500 hover:text-red-700" onclick="deletePostOrQuery(${post.id}, 'post')">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      `
+        )
+        .join("");
+    }
+
+    function renderQueries(queries) {
+      console.log("Rendering queries:", queries);
+      const queriesTableBody = document.getElementById("queriesTableBody");
+      if (!queriesTableBody) {
+        console.error("Queries table body element not found!");
+        return;
+      }
+      queriesTableBody.innerHTML = queries
+        .map(
+          (query) => `
+        <tr>
+          <td class="p-3">${query.id}</td>
+          <td class="p-3">${query.title}</td>
+          <td class="p-3">${query.author}</td>
+          <td class="p-3">${query.timestamp}</td>
+          <td class="p-3">
+            <button class="text-red-500 hover:text-red-700" onclick="deletePostOrQuery(${query.id}, 'query')">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      `
+        )
+        .join("");
+    }
+
+
+
+    function deletePostOrQuery(id, type) {
+      if (confirm(`Are you sure you want to delete this ${type}?`)) {
+        fetch("fetch_posts_and_queries.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `id=${id}&type=${type}`,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === "success") {
+              alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully.`);
+              fetchPostsAndQueries();
+            } else {
+              console.error("Error:", data.message);
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+    }
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initNotificationEventListeners();
+      fetchNotifications();
+      fetchPostsAndQueries(); // Call to fetch and render posts and queries
+    });
+
+
+    // Exp ends
     sidebarToggle.addEventListener("click", toggleSidebar);
 
     navButtons.forEach(button => {
