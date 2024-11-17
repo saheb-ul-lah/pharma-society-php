@@ -121,8 +121,9 @@
       <h2 id="modalTitle" class="text-2xl font-bold mb-4">
         Create Notification
       </h2>
-      <form id="notificationForm">
-        <input type="hidden" id="notificationId" />
+      <form id="notificationForm" method="POST">
+        <input type="hidden" id="notificationId" name="id" />
+        <input type="hidden" name="action" value="create" />
         <div class="mb-4">
           <label for="notificationTitle" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
           <input type="text" id="notificationTitle" name="title" required
@@ -158,149 +159,80 @@
     // Fetch and manage student data
     let students = [];
 
-    // Function to fetch student data
     function fetchStudentData() {
-      fetch("fetch_students.php") // Replace with the actual path to your PHP file that fetches data
-        .then((response) => response.json())
-        .then((data) => {
-          students = data; // Store the fetched student data
-          updateContent(); // Render the content with the fetched data
+      fetch("fetch_students.php")
+        .then(response => response.json())
+        .then(data => {
+          students = data;
+          updateContent();
         })
-        .catch((error) =>
-          console.error("Error fetching student data:", error)
-        );
+        .catch(error => console.error("Error fetching student data:", error));
     }
 
-    // Function to delete a student entry
     function deleteStudent(id) {
       if (confirm("Are you sure you want to delete this student?")) {
         fetch("delete_student.php", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: `delete_id=${id}`, // Send the delete id
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `delete_id=${id}`,
         })
-          .then((response) => response.text())
-          .then((data) => {
-            console.log(data); // Optionally log the response for debugging
-            students = students.filter((student) => student.id !== id); // Remove the deleted entry from the client-side data
-            updateContent(); // Refresh the content to reflect the deletion
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+            students = students.filter(student => student.id !== id);
+            updateContent();
           })
-          .catch((error) => console.error("Error deleting student:", error));
+          .catch(error => console.error("Error deleting student:", error));
       }
     }
 
-    // Initial call to fetch student data
     fetchStudentData();
 
     const posts = [
-      {
-        id: 1,
-        title: "First Blog Post",
-        author: "John Doe",
-        dateCreated: "2023-05-01",
-      },
-      {
-        id: 2,
-        title: "Upcoming Events",
-        author: "Jane Smith",
-        dateCreated: "2023-05-05",
-      },
-      {
-        id: 3,
-        title: "New Product Announcement",
-        author: "Bob Johnson",
-        dateCreated: "2023-05-10",
-      },
+      { id: 1, title: "First Blog Post", author: "John Doe", dateCreated: "2023-05-01" },
+      { id: 2, title: "Upcoming Events", author: "Jane Smith", dateCreated: "2023-05-05" },
+      { id: 3, title: "New Product Announcement", author: "Bob Johnson", dateCreated: "2023-05-10" },
     ];
 
     const queries = [
-      {
-        id: 1,
-        title: "Admission Query",
-        author: "Prospective Student",
-        dateCreated: "2023-05-15",
-      },
-      {
-        id: 2,
-        title: "Course Information",
-        author: "Current Student",
-        dateCreated: "2023-05-18",
-      },
-      {
-        id: 3,
-        title: "Alumni Event",
-        author: "Alumni Member",
-        dateCreated: "2023-05-20",
-      },
+      { id: 1, title: "Admission Query", author: "Prospective Student", dateCreated: "2023-05-15" },
+      { id: 2, title: "Course Information", author: "Current Student", dateCreated: "2023-05-18" },
+      { id: 3, title: "Alumni Event", author: "Alumni Member", dateCreated: "2023-05-20" },
     ];
 
-    let notifications = [
-      {
-        id: 1,
-        title: "New Alumni Registration",
-        message: "John Doe has registered as an alumni.",
-        date: "2023-05-22",
-        read: false,
-      },
-      {
-        id: 2,
-        title: "Event Reminder",
-        message: "Upcoming alumni meetup on June 15th.",
-        date: "2023-05-21",
-        read: true,
-      },
-      {
-        id: 3,
-        title: "Query Response",
-        message: "New response to admission query #1234.",
-        date: "2023-05-20",
-        read: false,
-      },
-    ];
-
-    // Fetch and manage alumni data
+    let notifications = [];
     let alumni = [];
 
-    // Function to fetch alumni data
     function fetchAlumniData() {
-      fetch("fetch_alumni.php") // Replace with the actual path to your PHP file that fetches data
-        .then((response) => response.json())
-        .then((data) => {
-          alumni = data; // Store the fetched alumni data
-          updateContent(); // Render the content with the fetched data
+      fetch("fetch_alumni.php")
+        .then(response => response.json())
+        .then(data => {
+          alumni = data;
+          updateContent();
         })
-        .catch((error) =>
-          console.error("Error fetching alumni data:", error)
-        );
+        .catch(error => console.error("Error fetching alumni data:", error));
     }
 
-    // Function to delete an alumni entry
     function deleteAlumni(id) {
       if (confirm("Are you sure you want to delete this alumni?")) {
         fetch("delete_alumni.php", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: `delete_id=${id}`, // Send the delete id
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `delete_id=${id}`,
         })
-          .then((response) => response.text())
-          .then((data) => {
-            console.log(data); // Optionally log the response for debugging
-            alumni = alumni.filter((item) => item.id !== id); // Remove the deleted entry from the client-side data
-            updateContent(); // Refresh the content to reflect the deletion
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+            alumni = alumni.filter(item => item.id !== id);
+            updateContent();
             location.reload();
           })
-          .catch((error) => console.error("Error deleting alumni:", error));
+          .catch(error => console.error("Error deleting alumni:", error));
       }
     }
 
-    // Initial call to fetch alumni data
     fetchAlumniData();
 
-    // DOM Elements
     const sidebar = document.getElementById("sidebar");
     const sidebarToggle = document.getElementById("sidebarToggle");
     const pageContent = document.getElementById("pageContent");
@@ -315,11 +247,9 @@
     const notificationMessage = document.getElementById("notificationMessage");
     const cancelNotification = document.getElementById("cancelNotification");
 
-    // State
     let activeNavItem = "Dashboard";
     let isSidebarVisible = true;
 
-    // Functions
     function toggleSidebar() {
       isSidebarVisible = !isSidebarVisible;
       sidebar.style.width = isSidebarVisible ? "16rem" : "0";
@@ -327,112 +257,192 @@
 
     function renderDashboard() {
       return `
-                <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    ${quickStats
-          .map(
-            (stat) => `
-                        <div class="bg-statCard p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg text-gray-600 mb-2">${stat.label}</h3>
-                            <p class="text-3xl font-bold mb-2">${stat.value.toLocaleString()}</p>
-                            <p class="text-sm ${stat.change >= 0
-                ? "text-green-500"
-                : "text-red-500"
-              }">
-                                ${stat.change >= 0 ? "+" : ""}${stat.change}% from last month
-                            </p>
-                        </div>
-                    `
-          )
-          .join("")}
-                </div>
-            `;
+        <h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          ${quickStats.map(stat => `
+            <div class="bg-statCard p-6 rounded-lg shadow-md">
+              <h3 class="text-lg text-gray-600 mb-2">${stat.label}</h3>
+              <p class="text-3xl font-bold mb-2">${stat.value.toLocaleString()}</p>
+              <p class="text-sm ${stat.change >= 0 ? "text-green-500" : "text-red-500"}">
+                ${stat.change >= 0 ? "+" : ""}${stat.change}% from last month
+              </p>
+            </div>
+          `).join("")}
+        </div>
+      `;
     }
 
     function renderTable(data, columns, deleteFunction) {
       return `
-                <div class="overflow-x-auto">
-                    <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
-                        <thead>
-                            <tr class="bg-gray-200">
-                                ${columns
-          .map(
-            (column) =>
-              `<th class="p-3 text-left">${column.label}</th>`
-          )
-          .join("")}
-                                <th class="p-3 text-left">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data
-          .map(
-            (item) => `
-                                <tr class="border-b border-gray-200">
-                                    ${columns
-                .map(
-                  (column) => `
-                                        <td class="p-3">
-                                            ${item[column.key]}
-                                        </td>
-                                    `
-                )
-                .join("")}
-                                    <td class="p-3">
-                                        <button class="text-red-500 hover:text-red-700" onclick="${deleteFunction.name}(${item.id})">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            `
-          )
-          .join("")}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+        <div class="overflow-x-auto">
+          <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <thead>
+              <tr class="bg-gray-200">
+                ${columns.map(column => `<th class="p-3 text-left">${column.label}</th>`).join("")}
+                <th class="p-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.map(item => `
+                <tr class="border-b border-gray-200">
+                  ${columns.map(column => `<td class="p-3">${item[column.key]}</td>`).join("")}
+                  <td class="p-3">
+                    <button class="text-red-500 hover:text-red-700" onclick="${deleteFunction.name}(${item.id})">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
     }
 
     function renderNotifications() {
       return `
-                <h1 class="text-3xl font-bold mb-6">Notifications</h1>
-                <div class="bg-white shadow-md rounded-lg overflow-hidden">
-                    ${notifications
-          .map(
-            (notification) => `
-                        <div class="p-4 border-b border-gray-200 ${notification.read ? "bg-gray-100" : "bg-white"}">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h3 class="font-semibold ${notification.read ? "text-gray-600" : "text-black"}">${notification.title}</h3>
-                                    <p class="text-sm text-gray-600">${notification.message}</p>
-                                </div>
-                                <span class="text-xs text-gray-500">${notification.date}</span>
-                            </div>
-                            <div class="mt-2 flex justify-end">
-                                <button class="text-sm text-blue-500 hover:text-blue-700 mr-2" onclick="toggleReadStatus(${notification.id})">
-                                    Mark as ${notification.read ? "unread" : "read"}
-                                </button>
-                                <button class="text-sm text-green-500 hover:text-green-700 mr-2" onclick="editNotification(${notification.id})">
-                                    Edit
-                                </button>
-                                <button class="text-sm text-red-500 hover:text-red-700" onclick="deleteNotification(${notification.id})">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    `
-          )
-          .join("")}
+        <h1 class="text-3xl font-bold mb-6">Notifications</h1>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+          ${notifications.map(notification => `
+            <div class="p-4 border-b border-gray-200 ${notification.is_read ? "bg-gray-100" : "bg-white"}">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h3 class="font-semibold ${notification.is_read ? "text-gray-600" : "text-black"}">
+                    ${notification.title}
+                  </h3>
+                  <p class="text-sm text-gray-600">${notification.message}</p>
                 </div>
-                <div class="mt-4 flex justify-between items-center">
-                    <button onclick="openNotificationModal()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-                        Create New Notification
-                    </button>
-                    <button onclick="markAllAsRead()" class="text-gray-600 hover:text-gray-800">
-                        Mark All as Read
-                    </button>
-                </div>
-            `;
+                <span class="text-xs text-gray-500">${notification.date}</span>
+              </div>
+              <div class="mt-2 flex justify-end">
+                <button class="text-sm text-blue-500 hover:text-blue-700 mr-2" onclick="toggleReadStatus(${notification.id})">
+                  Mark as ${notification.is_read ? "unread" : "read"}
+                </button>
+                <button class="text-sm text-green-500 hover:text-green-700 mr-2" onclick="openNotificationModal(${notification.id})">
+                  Edit
+                </button>
+                <button class="text-sm text-red-500 hover:text-red-700" onclick="deleteNotification(${notification.id})">
+                  Delete
+                </button>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+        <div class="mt-4 flex justify-between items-center">
+          <button onclick="openNotificationModal()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+            Create New Notification
+          </button>
+          <button onclick="markAllAsRead()" class="text-gray-600 hover:text-gray-800">
+            Mark All as Read
+          </button>
+        </div>
+      `;
+    }
+
+    function fetchNotifications() {
+      fetch('manage_notifications.php', { method: 'GET' })
+        .then(response => response.json())
+        .then(data => {
+          notifications = data;
+          updateContent();
+        })
+        .catch(error => console.error("Error fetching notifications:", error));
+    }
+
+    function toggleReadStatus(id) {
+      fetch('manage_notifications.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `action=mark_read&id=${id}`,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') fetchNotifications();
+        })
+        .catch(error => console.error("Error updating read status:", error));
+    }
+
+    function markAllAsRead() {
+      fetch('manage_notifications.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'action=mark_all_read',
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') fetchNotifications();
+        })
+        .catch(error => console.error("Error marking all as read:", error));
+    }
+
+    function deleteNotification(id) {
+      if (confirm("Are you sure you want to delete this notification?")) {
+        fetch('manage_notifications.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `action=delete&id=${id}`,
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') fetchNotifications();
+          })
+          .catch(error => console.error("Error deleting notification:", error));
+      }
+    }
+
+    function openNotificationModal(id = null) {
+      modalTitle.textContent = id ? "Edit Notification" : "Create Notification";
+      notificationId.value = id || "";
+      if (id) {
+        const notification = notifications.find(n => n.id == id);
+        if (notification) {
+          notificationTitle.value = notification.title;
+          notificationMessage.value = notification.message;
+        }
+      } else {
+        notificationTitle.value = "";
+        notificationMessage.value = "";
+      }
+      notificationModal.classList.remove("hidden");
+    }
+
+    function closeNotificationModal() {
+      notificationModal.classList.add("hidden");
+    }
+
+    function saveNotification(e) {
+      e.preventDefault();
+
+      const id = notificationId.value;
+      const title = notificationTitle.value;
+      const message = notificationMessage.value;
+
+      const formData = new URLSearchParams();
+      formData.append('title', title);
+      formData.append('message', message);
+
+      const action = id ? 'update' : 'create';
+      formData.append('action', action);
+
+      if (id) {
+        formData.append('id', id);
+      }
+
+      fetch('manage_notifications.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            closeNotificationModal();
+            fetchNotifications();
+          } else {
+            console.error('Error:', data.message);
+          }
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     function renderContent() {
@@ -443,8 +453,8 @@
           break;
         case "Alumni":
           content = `
-                        <h1 class="text-3xl font-bold mb-6">Alumni Management</h1>
-                        ${renderTable(alumni, [
+            <h1 class="text-3xl font-bold mb-6">Alumni Management</h1>
+            ${renderTable(alumni, [
             { key: "full_name", label: "Full Name" },
             { key: "dob", label: "D.O.B" },
             { key: "gender", label: "Gender" },
@@ -459,12 +469,12 @@
             { key: "twitter", label: "Twitter" },
             { key: "facebook", label: "Facebook" },
           ], deleteAlumni)}
-                    `;
+          `;
           break;
         case "Students":
           content = `
-                        <h1 class="text-3xl font-bold mb-6">Student Management</h1>
-                        ${renderTable(students, [
+            <h1 class="text-3xl font-bold mb-6">Student Management</h1>
+            ${renderTable(students, [
             { key: "full_name", label: "Full Name" },
             { key: "email", label: "Email" },
             { key: "phone", label: "Phone" },
@@ -472,27 +482,27 @@
             { key: "dob", label: "Date of Birth" },
             { key: "year_of_admission", label: "Year of Admission" },
           ], deleteStudent)}
-                    `;
+          `;
           break;
         case "Posts":
           content = `
-                        <h1 class="text-3xl font-bold mb-6">Posts Management</h1>
-                        ${renderTable(posts, [
+            <h1 class="text-3xl font-bold mb-6">Posts Management</h1>
+            ${renderTable(posts, [
             { key: "title", label: "Title" },
             { key: "author", label: "Author" },
             { key: "dateCreated", label: "Date Created" },
           ], deleteItem)}
-                    `;
+          `;
           break;
         case "Queries":
           content = `
-                        <h1 class="text-3xl font-bold mb-6">Queries Management</h1>
-                        ${renderTable(queries, [
+            <h1 class="text-3xl font-bold mb-6">Queries Management</h1>
+            ${renderTable(queries, [
             { key: "title", label: "Title" },
             { key: "author", label: "Author" },
             { key: "dateCreated", label: "Date Created" },
           ], deleteItem)}
-                    `;
+          `;
           break;
         case "Notifications":
           content = renderNotifications();
@@ -514,122 +524,55 @@
     }
 
     function filterData(searchTerm) {
-      const filteredAlumni = alumni.filter((item) =>
-        Object.values(item).some((val) =>
+      const filteredAlumni = alumni.filter(item =>
+        Object.values(item).some(val =>
           val.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
-      const filteredStudents = students.filter((item) =>
-        Object.values(item).some((val) =>
+      const filteredStudents = students.filter(item =>
+        Object.values(item).some(val =>
           val.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
-      const filteredPosts = posts.filter((item) =>
-        Object.values(item).some((val) =>
+      const filteredPosts = posts.filter(item =>
+        Object.values(item).some(val =>
           val.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
-      const filteredQueries = queries.filter((item) =>
-        Object.values(item).some((val) =>
+      const filteredQueries = queries.filter(item =>
+        Object.values(item).some(val =>
           val.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
 
-      // Update the data
       alumni.splice(0, alumni.length, ...filteredAlumni);
       students.splice(0, students.length, ...filteredStudents);
       posts.splice(0, posts.length, ...filteredPosts);
       queries.splice(0, queries.length, ...filteredQueries);
 
-      // Re-render the content
       updateContent();
     }
 
-    function openNotificationModal(id = null) {
-      modalTitle.textContent = id ? "Edit Notification" : "Create Notification";
-      notificationId.value = id || "";
-      if (id) {
-        const notification = notifications.find((n) => n.id === id);
-        notificationTitle.value = notification.title;
-        notificationMessage.value = notification.message;
-      } else {
-        notificationTitle.value = "";
-        notificationMessage.value = "";
-      }
-      notificationModal.classList.remove("hidden");
+    function initNotificationEventListeners() {
+      cancelNotification.addEventListener('click', closeNotificationModal);
+      notificationForm.addEventListener('submit', saveNotification);
     }
 
-    function closeNotificationModal() {
-      notificationModal.classList.add("hidden");
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      initNotificationEventListeners();
+      fetchNotifications();
+    });
 
-    function saveNotification(e) {
-      e.preventDefault();
-      const id = notificationId.value;
-      const title = notificationTitle.value;
-      const message = notificationMessage.value;
-      const date = new Date().toISOString().split("T")[0];
-
-      if (id) {
-        // Edit existing notification
-        const index = notifications.findIndex((n) => n.id === parseInt(id));
-        notifications[index] = { ...notifications[index], title, message };
-      } else {
-        // Create new notification
-        const newId = Math.max(...notifications.map((n) => n.id)) + 1;
-        notifications.unshift({
-          id: newId,
-          title,
-          message,
-          date,
-          read: false,
-        });
-      }
-
-      closeNotificationModal();
-      updateContent();
-    }
-
-    function deleteNotification(id) {
-      notifications = notifications.filter((n) => n.id !== id);
-      updateContent();
-    }
-
-    function toggleReadStatus(id) {
-      const notification = notifications.find((n) => n.id === id);
-      notification.read = !notification.read;
-      updateContent();
-    }
-
-    function markAllAsRead() {
-      notifications = notifications.map((n) => ({ ...n, read: true }));
-      updateContent();
-    }
-
-    function editNotification(id) {
-      openNotificationModal(id);
-    }
-
-    function deleteItem(id) {
-      if (activeNavItem === "Posts") {
-        posts = posts.filter((post) => post.id !== id);
-      } else if (activeNavItem === "Queries") {
-        queries = queries.filter((query) => query.id !== id);
-      }
-      updateContent();
-    }
-
-    // Event Listeners
     sidebarToggle.addEventListener("click", toggleSidebar);
 
-    navButtons.forEach((button) => {
+    navButtons.forEach(button => {
       button.addEventListener("click", () => {
         activeNavItem = button.getAttribute("data-nav");
         updateContent();
       });
     });
 
-    searchInput.addEventListener("input", (e) => {
+    searchInput.addEventListener("input", e => {
       filterData(e.target.value);
     });
 
@@ -638,10 +581,6 @@
       updateContent();
     });
 
-    notificationForm.addEventListener("submit", saveNotification);
-    cancelNotification.addEventListener("click", closeNotificationModal);
-
-    // Initial render
     updateContent();
   </script>
 </body>
