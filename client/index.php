@@ -20,6 +20,18 @@ if (isset($_SESSION['email'])) {
     }
     $stmt->close();
 }
+$sql = "SELECT * FROM notifications";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $notifications= [];
+    while ($row = $result->fetch_assoc()) {
+        $notifications[] = $row;
+    }
+    json_encode($notifications);
+} else {
+    json_encode([]);
+}
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -264,23 +276,39 @@ $conn->close();
         prevBtn.addEventListener('click', showPrevImage);
 
         setInterval(showNextImage, 3000);
+        // Directly use the PHP variable for notifications
+        const notifications = <?php echo json_encode($notifications) ?>
 
-        // Fetch and display notifications
-        fetch("https://csjmcadmin-api.vercel.app/notifications")
-            .then(response => response.json())
-            .then(data => {
-                const notificationsContainer = document.getElementById("notifications");
-                if (data.length > 0) {
-                    data.forEach(notification => {
-                        const notificationElement = document.createElement("p");
-                        notificationElement.innerHTML = `<i class="fas fa-bell mr-2"></i>${notification.message}`;
-                        notificationElement.className = "bg-[#FAEBD7] p-2 rounded-lg";
-                        notificationsContainer.appendChild(notificationElement);
-                    });
-                } else {
-                    notificationsContainer.textContent = "No notifications available.";
-                }
+        // Display notifications
+        const notificationsContainer = document.getElementById("notifications");
+
+        if (notifications.length > 0) {
+            notifications.forEach(notification => {
+                const notificationElement = document.createElement("div");
+
+                // Create title element
+                const titleElement = document.createElement("h4");
+                titleElement.innerHTML = `<i class="fas fa-bell mr-2"></i>${notification.title}`;
+                titleElement.className = "font-bold text-lg mb-1";
+
+                // Create message element
+                const messageElement = document.createElement("p");
+                messageElement.textContent = notification.message;
+                messageElement.className = "text-sm text-gray-700";
+
+                // Append title and message to the notification container
+                notificationElement.appendChild(titleElement);
+                notificationElement.appendChild(messageElement);
+
+                // Style the notification container
+                notificationElement.className = "bg-[#FAEBD7] p-4 mb-2 rounded-lg shadow";
+
+                // Append the notification element to the notifications container
+                notificationsContainer.appendChild(notificationElement);
             });
+        } else {
+            notificationsContainer.textContent = "No notifications available.";
+        }
 
         // Infinite scroll for marquee
         const marquee = document.querySelector('.animate-marquee');
