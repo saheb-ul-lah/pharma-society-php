@@ -1,4 +1,6 @@
 <?php
+session_name("administrative"); 
+session_start();
 // Database connection parameters
 $host = 'localhost'; // Change to your database host
 $dbname = 'pharmaceutical_society'; // Change to your database name

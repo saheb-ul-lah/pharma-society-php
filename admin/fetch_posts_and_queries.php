@@ -1,4 +1,6 @@
 <?php
+session_name("administrative"); 
+session_start();
 header('Content-Type: application/json');
 require_once 'db_config.php'; // Adjust this to your database configuration file.
 

@@ -1,4 +1,6 @@
 <?php
+session_name("administrative"); 
+session_start();
 // Database configuration
 $servername = "localhost"; // Your server name
 $username = "root"; // Your database username
