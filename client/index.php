@@ -136,7 +136,7 @@ $conn->close();
                 <a href="./about.html" class="inline-block px-6 py-3 bg-[#FAEBD7] text-gray-800 border-2 border-gray-800 rounded-lg hover:bg-gray-100 transition duration-300 shadow-lg animate-pulse font-semibold">Read More</a>
             </div>
             <div>
-                <h2 class="text-3xl font-bold mb-4">NOTIFICATIONS</h2>
+                <h2 class="text-3xl font-bold mb-4">NOTICE BOARD</h2>
                 <div id="notifications" class="space-y-2"></div>
                 <a href="./news-events.html" class="inline-block mt-4 px-6 py-3 bg-[#FAEBD7] text-gray-800 border-2 border-gray-800 rounded-lg hover:bg-gray-100 transition duration-300 shadow-lg animate-pulse font-semibold">View All</a>
             </div>
@@ -171,7 +171,7 @@ $conn->close();
                     <ul class="space-y-2">
                         <li><a href="https://dibru.ac.in/" target="_blank" class="hover:text-primary transition duration-300"><i class="fas fa-angle-right mr-2"></i>Dibrugarh University</a></li>
                         <li><a href="https://erp.dibru.work/dibru/student/login" target="_blank" class="hover:text-primary transition duration-300"><i class="fas fa-angle-right mr-2"></i>ERP Portal</a></li>
-                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSewaN2-wlaET3fROMTOUrpLsG37Vb5Z-ZY_gy1XPCG7ijENhQ/viewform" target="_blank" class="hover:text-primary transition duration-300"><i class="fas fa-angle-right mr-2"></i>DUAA Portal</a></li>
+                        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSewaN2-wlaET3fROMTOUrpLsG37Vb5Z-ZY_gy1XPCG7ijENhQ/viewform" target="_blank" class="hover:text-primary transition duration-300"><i class="fas fa-angle-right mr-2"></i>Dibrugarh University Alumni Association Portal</a></li>
                     </ul>
                 </div>
 
@@ -226,8 +226,8 @@ $conn->close();
             const content = document.createElement('div');
             content.className = 'absolute inset-x-[15%] bottom-5 text-center text-white';
             content.innerHTML = `
-                <h1 class="text-4xl font-bold mb-4 text-shadow">Welcome back <?php echo htmlspecialchars($user_name) ?>!</h1>
-                <p class="text-xl mb-24 text-shadow">Pharmaceutical Society's Alumni & Students Association, DU</p>
+                <h1 class="text-4xl font-bold mb-4 text-shadow">Welcome <?php echo htmlspecialchars($user_name) ?>!</h1>
+                <p class="text-xl mb-24 text-shadow">Pharmaceutical Society, Dibrugarh University</p>
             `;
             div.appendChild(content);
             return div;
