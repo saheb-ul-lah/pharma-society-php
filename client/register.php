@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->execute()) {
             $message = "Account created successfully";
             $toastClass = "#28a745"; // Success color
-            header("Location: index.php");
+            header("Location: login.php");
         } else {
             $message = "Error: " . $stmt->error;
             $toastClass = "#dc3545"; // Danger color
