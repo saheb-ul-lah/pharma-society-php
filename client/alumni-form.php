@@ -128,73 +128,39 @@ if ($user_email) {
 <body class="bg-gray-100 min-h-screen">
   <nav class="sticky top-0 z-50 bg-navy py-3 px-6 shadow-lg">
     <div class="container mx-auto flex flex-wrap items-center justify-between">
-      <!-- Logo and Title -->
       <a href="./index.php" class="flex items-center">
-        <img src="https://ccsaalumni.in/static/media/du.ac81f37e7c52c0eb3d53.png" alt="DU Logo"
-          class="w-12 h-12 rounded-full mr-3">
+        <img src="https://ccsaalumni.in/static/media/du.ac81f37e7c52c0eb3d53.png" alt="DU Logo" class="w-12 h-12 rounded-full mr-3">
         <span class="text-xl text-antique-white font-bold">Pharmaceutical Society</span>
       </a>
 
-      <!-- Navbar Toggle for Mobile -->
       <button id="navbar-toggle" class="lg:hidden text-antique-white">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
-          </path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
         </svg>
       </button>
 
-      <!-- Navbar Menu -->
       <div id="navbar-menu" class="hidden lg:flex lg:items-center w-full lg:w-auto mt-4 lg:mt-0">
         <ul class="flex flex-col lg:flex-row lg:ml-auto space-x-4 items-center">
-          <li><a href="./index.php"
-              class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Home</a>
-          </li>
-          <li><a href="./alumni.php"
-              class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Alumni</a>
-          </li>
-          <li><a href="./student.php"
-              class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Students</a>
-          </li>
-          <li><a href="./about.php"
-              class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">About</a>
-          </li>
-          <li><a href="./news-events.php"
-              class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">News
-              and Events</a></li>
-
-          <!-- Dropdown Menu for Forms -->
-          <li class="relative group">
-            <a href="#"
-              class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Register</a>
-            <ul class="absolute hidden group-hover:block bg-navy mt-1 rounded-md shadow-lg">
-              <li><a style="text-wrap: nowrap;" href="./alumni-form.php"
-                  class="block px-4 py-2 text-antique-white hover:bg-blue-600 hover:text-yellow-300 transition duration-300 ease-in-out">Alumni
-                  Form</a></li>
-              <li><a style="text-wrap: nowrap;" href="./student-form.php"
-                  class="block px-4 py-2 text-antique-white hover:bg-blue-600 hover:text-yellow-300 transition duration-300 ease-in-out">Student
-                  Form</a></li>
-            </ul>
-          </li>
-
-          <li><a href="./posts.php"
-              class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Posts</a>
-          </li>
-
-          <!-- Profile Image -->
-
-
-          <!-- Join Us Button -->
+          <li><a href="./index.php" class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Home</a></li>
+          <li><a href="./alumni.php" class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Alumni</a></li>
+          <li><a href="./student.php" class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Students</a></li>
+          <li><a href="./about.php" class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">About</a></li>
+          <li><a href="./news-events.php" class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">News and Events</a></li>
           <?php if (isset($_SESSION['email'])): ?>
-            <button class="auth-button ms-3" onclick="window.location.href='logout.php'">Log Out</button>
-            <li class="nav-item"><a class="nav-link" href="./profile.php" onclick="setActiveLink(this)"><img
-                  style="position: absolute;top: 20px;right: 60px; height: 40px; width:40px; border-radius: 50%;"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ-l3onxJrLVYB8Ak7aKCYcOznSKyaPz1P8Q&s"
-                  alt="Profile pic"></a></li>
+            <li><a href="./posts.php" class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Posts</a></li>
+            <li class="relative group">
+              <a href="#" class="nav-link text-antique-white px-4 py-2 rounded-md transition duration-300 ease-in-out hover:text-yellow-300 hover:bg-blue-600 font-medium">Register</a>
+              <ul class="absolute hidden group-hover:block bg-navy mt-1 rounded-md shadow-lg">
+                <li><a href="./alumni-form.php" class="block px-4 py-2 text-antique-white hover:bg-blue-600 hover:text-yellow-300 transition duration-300 ease-in-out">Alumni Form</a></li>
+                <li><a href="./student-form.php" class="block px-4 py-2 text-antique-white hover:bg-blue-600 hover:text-yellow-300 transition duration-300 ease-in-out">Student Form</a></li>
+              </ul>
+            </li>
+            <li><a href="./profile.php" class="nav-link"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJ-l3onxJrLVYB8Ak7aKCYcOznSKyaPz1P8Q&s" alt="Profile pic" class="w-10 h-10 rounded-full"></a></li>
+            <li><button onclick="window.location.href='logout.php'" class="bg-button-red text-antique-white px-4 py-2 rounded-full hover:bg-button-red-hover transition duration-300">Log Out</button></li>
           <?php else: ?>
-            <button class="auth-button ms-3" onclick="window.location.href='login.php'">Join us</button>
+            <li><button onclick="window.location.href='login.php'" class="bg-button-red text-antique-white px-4 py-2 rounded-full hover:bg-button-red-hover transition duration-300">Join us</button></li>
           <?php endif; ?>
         </ul>
-
       </div>
     </div>
   </nav>
