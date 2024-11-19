@@ -1,3 +1,12 @@
+<?php
+session_name("administrative"); 
+session_start();
+if (!isset($_SESSION['email'])) {
+  $redirect_url = 'login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']);
+  header("Location: $redirect_url");
+  exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
