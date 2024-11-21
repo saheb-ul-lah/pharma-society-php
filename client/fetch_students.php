@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 }
 
 // Fetch all students
-$sql = "SELECT * FROM student_registration ORDER BY submitted_at DESC";
+$sql = "SELECT * FROM student_registration WHERE validation=1 ORDER BY submitted_at DESC";
 $result = $conn->query($sql);
 
 $students = [];

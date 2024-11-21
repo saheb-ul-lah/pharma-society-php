@@ -6,6 +6,28 @@ if (!isset($_SESSION['email'])) {
   header("Location: $redirect_url");
   exit();
 }
+include("includes/db_connect.php");
+$data = [];
+if($_SESSION['email']){
+  $user_email = $_SESSION['email'];
+}
+else{
+  $user_email = "GUEST";
+}
+// Fetch counts from each table
+$sqlAlumni = "SELECT COUNT(*) as alumni_count FROM alumni_registration";
+$sqlStudent = "SELECT COUNT(*) as student_count FROM student_registration";
+$sqlPosts = "SELECT COUNT(*) as posts_count FROM posts";
+$sqlQueries = "SELECT COUNT(*) as queries_count FROM queries";
+
+$data['alumni'] = $conn->query($sqlAlumni)->fetch_assoc()['alumni_count'] ?? 0;
+$data['student'] = $conn->query($sqlStudent)->fetch_assoc()['student_count'] ?? 0;
+$data['posts'] = $conn->query($sqlPosts)->fetch_assoc()['posts_count'] ?? 0;
+$data['queries'] = $conn->query($sqlQueries)->fetch_assoc()['queries_count'] ?? 0;
+
+// Return data as JSON
+json_encode($data);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +39,7 @@ if (!isset($_SESSION['email'])) {
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" >
 
   <script>
     tailwind.config = {
@@ -89,7 +112,7 @@ if (!isset($_SESSION['email'])) {
           </button>
         </nav>
         <button class="flex items-center p-2 text-red-600">
-          <i class="fas fa-sign-out-alt mr-2"></i> Logout
+          <a href="logout.php"><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
         </button>
       </div>
     </aside>
@@ -111,8 +134,8 @@ if (!isset($_SESSION['email'])) {
           </button>
           <div class="flex items-center cursor-pointer">
             <img src="https://via.placeholder.com/32" alt="User" class="w-8 h-8 rounded-full mr-2" />
-            <span class="mr-2">John Doe</span>
-            <i class="fas fa-chevron-down"></i>
+            <span class="mr-2"><?php echo $user_email ?></span>
+            <!-- <i class="fas fa-chevron-down"></i> -->
           </div>
         </div>
       </header>
@@ -155,15 +178,35 @@ if (!isset($_SESSION['email'])) {
       </form>
     </div>
   </div>
-
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
   <script>
+    toastr.options = {
+  "closeButton": false,
+  "debug": false,
+  "newestOnTop": false,
+  "progressBar": true,
+  "positionClass": "toast-top-right",
+  "preventDuplicates": false,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "5000",
+  "extendedTimeOut": "1000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+}
     // Data
-    const quickStats = [
-      { label: "Active Users", value: 1234, change: 5.6 },
-      { label: "New Registrations", value: 567, change: -2.3 },
-      { label: "Upcoming Events", value: 12, change: 10.5 },
-      { label: "Open Tickets", value: 89, change: -7.8 },
-    ];
+   const datas = <?php echo json_encode($data); ?> ;
+      const quickStats = [
+        { label: "Alumni", value: datas.alumni },
+        { label: "Student", value: datas.student },
+        { label: "Posts", value: datas.posts },
+        { label: "Queries", value: datas.queries },
+      ];
+     
 
     // Fetch and manage student data
     let students = [];
@@ -239,7 +282,7 @@ if (!isset($_SESSION['email'])) {
           .catch(error => console.error("Error deleting alumni:", error));
       }
     }
-
+    
     fetchAlumniData();
 
     const sidebar = document.getElementById("sidebar");
@@ -272,41 +315,83 @@ if (!isset($_SESSION['email'])) {
             <div class="bg-statCard p-6 rounded-lg shadow-md">
               <h3 class="text-lg text-gray-600 mb-2">${stat.label}</h3>
               <p class="text-3xl font-bold mb-2">${stat.value.toLocaleString()}</p>
-              <p class="text-sm ${stat.change >= 0 ? "text-green-500" : "text-red-500"}">
-                ${stat.change >= 0 ? "+" : ""}${stat.change}% from last month
-              </p>
             </div>
           `).join("")}
         </div>
       `;
     }
 
-    function renderTable(data, columns, deleteFunction) {
-      return `
-        <div class="overflow-x-auto">
-          <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead>
-              <tr class="bg-gray-200">
-                ${columns.map(column => `<th class="p-3 text-left">${column.label}</th>`).join("")}
-                <th class="p-3 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${data.map(item => `
-                <tr class="border-b border-gray-200">
-                  ${columns.map(column => `<td class="p-3">${item[column.key]}</td>`).join("")}
-                  <td class="p-3">
-                    <button class="text-red-500 hover:text-red-700" onclick="${deleteFunction.name}(${item.id})">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-      `;
+    function validateUser(id) {
+      fetch('validatealumniuser.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${id}`,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            toastr.success(data.message); // Display success message
+            // Optionally, refresh the table or update UI dynamically
+          } else {
+            toastr.success(data.message); // Display success message
+          }
+        })
+        .catch(error => console.error('Error:', error));
     }
+
+    function validateStu(id) {
+      fetch('validatestudentuser.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${id}`,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            toastr.success(data.message); // Display success message
+            // Optionally, refresh the table or update UI dynamically
+          } else {
+            toastr.success(data.message); // Display success message
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+function renderTable(data, columns, deleteFunction, validateFunction) {
+  return `
+    <div class="overflow-x-auto">
+      <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <thead>
+          <tr class="bg-gray-200">
+            ${columns.map(column => `<th class="p-3 text-left">${column.label}</th>`).join("")}
+            <th class="p-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map(item => `
+            <tr class="border-b border-gray-200">
+              ${columns.map(column => `<td class="p-3">${item[column.key]}</td>`).join("")}
+              <td class="p-3 flex gap-2">
+                ${
+                  item.validation
+                    ? `<button class="text-green-500 hover:text-green-700" onclick="${validateFunction.name}(${item.id})">
+                        <i class="fas fa-check"></i> Validate
+                      </button>`
+                    : ""
+                }
+                <button class="text-red-500 hover:text-red-700" onclick="${deleteFunction.name}(${item.id})">
+                  <i class="fas fa-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+
 
     function renderNotifications() {
       return `
@@ -478,7 +563,8 @@ if (!isset($_SESSION['email'])) {
             { key: "linkedin", label: "LinkedIn" },
             { key: "twitter", label: "Twitter" },
             { key: "facebook", label: "Facebook" },
-          ], deleteAlumni)}
+            { key: "validation", label:"Validation Status"}
+          ], deleteAlumni, validateUser)}
       `;
           break;
         case "Students":
@@ -496,7 +582,8 @@ if (!isset($_SESSION['email'])) {
             { key: "course", label: "Course" },
             { key: "dob", label: "Date of Birth" },
             { key: "year_of_admission", label: "Year of Admission" },
-          ], deleteStudent)}
+            { key: "validation", label:"Validation Status"}
+          ], deleteStudent, validateStu)}
       `;
           break;
 

@@ -1,9 +1,9 @@
 <?php
 session_start();
 if (!isset($_SESSION['email'])) {
-  $redirect_url = 'login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']);
-  header("Location: $redirect_url");
-  exit();
+    $redirect_url = 'login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']);
+    header("Location: $redirect_url");
+    exit();
 }
 include('includes/db_connect.php'); // Ensure this file has proper connection details
 
@@ -26,30 +26,14 @@ if ($user_email) {
 
   // If the count is greater than 0, the form has already been filled
   if ($count > 0) {
-    echo "
-    <script src='https://cdn.jsdelivr.net/npm/toastify-js'></script>
-    <link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css'>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Toastify({
-                text: 'You have already filled out the registration form!',
-                duration: 1000,
-                gravity: 'top',
-                position: 'right',
-                backgroundColor: 'linear-gradient(to right, #ff5f6d, #ffc371)',
-                stopOnFocus: true
-            }).showToast();
-
-            setTimeout(function () {
-                window.location.href = 'profile.php';
-            }, 1000);
-        });
-    </script>
-    ";
+    echo "<script>alert('You have already filled out the registration form.'); window.location.href = './index.php';</script>";
+    exit(); // Stop further execution
   }
 }
 
+// Proceed to show the registration form if the user hasn't filled it out
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -106,23 +90,6 @@ if ($user_email) {
       font-family: montserrat;
     }
   </style>
-  <style>
-    /* Join us / Log Out button styling */
-    .auth-button {
-      font-family: "Montserrat", sans-serif;
-      background-color: rgb(174, 106, 106);
-      color: antiquewhite;
-      border: none;
-      padding: 8px 10px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .auth-button:hover {
-      background-color: rgb(150, 90, 90);
-    }
-  </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen">
@@ -167,7 +134,7 @@ if ($user_email) {
   <div class="container mx-auto max-w-3xl bg-white shadow-lg rounded-lg overflow-hidden p-6 mt-6 mb-6 fade-in">
     <h1 class="text-2xl font-bold mb-6 text-center text-indigo-600 border-b-2 border-indigo-600 pb-2">Pharmaceutical
       Society Alumni Registration Form</h1>
-    <!-- <p class="text-gray-600 mb-8 text-center font-bold ">Please fill out the form with your correct information.</p> -->
+    <p class="text-gray-600 mb-8 text-center font-bold ">Please fill out the form with your correct information.</p>
 
     <form id="registrationForm" class="space-y-8" enctype="multipart/form-data">
       <section>
@@ -202,7 +169,7 @@ if ($user_email) {
           </div>
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Email *</label>
-            <input type="email" id="email" name="email" required
+            <input type="email" id="email" name="email" required value="<?php echo htmlspecialchars($user_email); ?>" readonly
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
           <div>
@@ -263,7 +230,7 @@ if ($user_email) {
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
           <div>
-            <label for="twitter" class="block text-sm font-medium text-gray-700 mb-1 font-bold">X Profile (Twitter)</label>
+            <label for="twitter" class="block text-sm font-medium text-gray-700 mb-1 font-bold">Twitter Profile</label>
             <input type="url" id="twitter" name="twitter"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
           </div>
@@ -294,9 +261,6 @@ if ($user_email) {
         Registration</button>
     </form>
   </div>
-
-  <!-- Add this HTML structure for the toast container -->
-  <div id="toastContainer" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -350,7 +314,7 @@ if ($user_email) {
         const file = event.target.files[0];
         if (file) {
           if (file.size > 200 * 1024) {
-            showToast('Error', 'Image size must be less than 200KB', 'error');
+            alert('Image size must be less than 200KB');
             event.target.value = '';
             return;
           }
@@ -376,42 +340,18 @@ if ($user_email) {
           .then(data => {
             console.log("This is the form data :", data);
             if (data.status === 'success') {
-              showToast('Success', data.message, 'success');
+              alert(data.message);
               form.reset(); // Optionally reset the form
             } else {
-              showToast('Error', data.message, 'error');
+              alert(data.message);
             }
           })
           .catch(error => {
             console.error('Error:', error);
-            showToast('Error', 'An error occurred while submitting the form.', 'error');
+            alert('An error occurred while submitting the form.');
           });
       });
     });
-
-    function showToast(title, message, type) {
-      const toastContainer = document.getElementById('toastContainer');
-
-      const toast = document.createElement('div');
-      toast.className = `toast flex items-center justify-between ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white rounded-md p-4 shadow-lg`;
-      toast.innerHTML = `
-    <div>
-      <h2 class="text-lg font-bold">${title}</h2>
-      <p>${message}</p>
-    </div>
-    <button class="text-white ml-4">✖</button>
-  `;
-
-      // Add close button functionality
-      toast.querySelector('button').onclick = () => toast.remove();
-
-      toastContainer.appendChild(toast);
-
-      // Automatically remove the toast after 3 seconds
-      setTimeout(() => {
-        toast.remove();
-      }, 3000);
-    }
   </script>
 
   <!-- Footer -->

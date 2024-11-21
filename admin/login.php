@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['email'] = $email;
 
             // Determine where to redirect after successful login
-            $redirect_url = isset($_SESSION['redirect']) ? $_SESSION['redirect'] : 'index.php';
+            $redirect_url = isset($_SESSION['redirect']) ? $_SESSION['redirect'] : 'dashboard.php';
             
             // Clear the redirect session variable
             unset($_SESSION['redirect']);

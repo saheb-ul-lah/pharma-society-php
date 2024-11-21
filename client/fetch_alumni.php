@@ -35,6 +35,8 @@ $sql = "
         alumni_registration ar
     LEFT JOIN 
         alumni_degrees ad ON ar.id = ad.alumni_id
+    WHERE
+        ar.validation=1
     GROUP BY 
         ar.id
     ORDER BY 

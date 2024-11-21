@@ -13,7 +13,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Fetch student data
-    $stmt = $pdo->query("SELECT id, full_name, email, phone, course, submitted_at, profile_pic, dob, year_of_admission FROM student_registration");
+    $stmt = $pdo->query("SELECT id, full_name, email, phone, course, submitted_at, profile_pic, dob, year_of_admission, validation FROM student_registration");
     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Return JSON response

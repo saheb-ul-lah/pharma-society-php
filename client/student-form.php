@@ -5,7 +5,35 @@ if (!isset($_SESSION['email'])) {
     header("Location: $redirect_url");
     exit();
 }
+include('includes/db_connect.php'); // Ensure this file has proper connection details
+
+// Ensure connection was successful
+if (!$conn) {
+  die("Connection failed: " . mysqli_connect_error());
+}
+
+// Fetch the user's email from the session
+$user_email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
+
+// Check if the user has already filled the form
+if ($user_email) {
+  $stmt = $conn->prepare("SELECT COUNT(*) FROM student_registration WHERE email = ?");
+  $stmt->bind_param("s", $user_email);
+  $stmt->execute();
+  $stmt->bind_result($count);
+  $stmt->fetch();
+  $stmt->close();
+
+  // If the count is greater than 0, the form has already been filled
+  if ($count > 0) {
+    echo "<script>alert('You have already filled out the registration form.'); window.location.href = './index.php';</script>";
+    exit(); // Stop further execution
+  }
+}
+
+// Proceed to show the registration form if the user hasn't filled it out
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -153,9 +181,8 @@ if (!isset($_SESSION['email'])) {
                     </div>
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email * [Note: Email can't be changed in future]</label>
-                        <input id="email" type="email" name="email" placeholder="Enter your email address" required
-                            class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:border-blue-500">
-                    </div>
+                        <input type="email" id="email" name="email" required value="<?php echo htmlspecialchars($user_email); ?>" readonly
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Phone Number *</label>
                         <input id="phone" type="tel" name="phone" placeholder="Enter your phone number" required
