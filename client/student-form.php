@@ -1,38 +1,85 @@
 <?php
 session_start();
+
+// Check if the user is logged in
 if (!isset($_SESSION['email'])) {
+    // Redirect to login page with the current page URL for redirection after login
     $redirect_url = 'login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']);
     header("Location: $redirect_url");
     exit();
 }
-include('includes/db_connect.php'); // Ensure this file has proper connection details
 
-// Ensure connection was successful
+include('includes/db_connect.php'); // Ensure this file contains proper database connection details
+
+// Check if the database connection was successful
 if (!$conn) {
-  die("Connection failed: " . mysqli_connect_error());
+    die("Database connection failed: " . mysqli_connect_error());
 }
 
 // Fetch the user's email from the session
 $user_email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
 
-// Check if the user has already filled the form
 if ($user_email) {
-  $stmt = $conn->prepare("SELECT COUNT(*) FROM student_registration WHERE email = ?");
-  $stmt->bind_param("s", $user_email);
-  $stmt->execute();
-  $stmt->bind_result($count);
-  $stmt->fetch();
-  $stmt->close();
+    // Check if the user has already filled the student form
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM student_registration WHERE email = ?");
+    if (!$stmt) {
+        die("SQL error in student_registration check: " . $conn->error);
+    }
+    $stmt->bind_param("s", $user_email);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
 
-  // If the count is greater than 0, the form has already been filled
-  if ($count > 0) {
-    echo "<script>alert('You have already filled out the registration form.'); window.location.href = './index.php';</script>";
-    exit(); // Stop further execution
-  }
+    // If the count is greater than 0, the form has already been filled
+    if ($count > 0) {
+        echo "<script>
+            alert('You have already filled out the registration form.');
+            window.location.href = './index.php';
+        </script>";
+        exit();
+    }
+
+    // Check user's role from the `signup_users` table (ensure table and column names are correct)
+    $stmt = $conn->prepare("SELECT role FROM `signup-users` WHERE user_email = ?");
+    if (!$stmt) {
+        die("SQL error in role check: " . $conn->error);
+    }
+    $stmt->bind_param("s", $user_email);
+    $stmt->execute();
+    $stmt->bind_result($role);
+    $stmt->fetch();
+    $stmt->close();
+
+    // If the user is an alumni, redirect them to the appropriate form
+    if ($role === "alumni") {
+        echo "
+        <script src='https://cdn.jsdelivr.net/npm/toastify-js'></script>
+        <link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css'>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Toastify({
+                    text: 'Since you are an alumni, you cannot fill up the student form!',
+                    duration: 2000,
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: 'linear-gradient(to right, #ff5f6d, #ffc371)',
+                    stopOnFocus: true
+                }).showToast();
+
+                setTimeout(function () {
+                    window.location.href = 'alumni-form.php';
+                }, 2000);
+            });
+        </script>
+        ";
+        exit();
+    }
 }
 
-// Proceed to show the registration form if the user hasn't filled it out
+// Proceed with the student registration form if the user hasn't filled it out and is not an alumni
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
