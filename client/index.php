@@ -24,7 +24,7 @@ $sql = "SELECT * FROM notifications";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    $notifications= [];
+    $notifications = [];
     while ($row = $result->fetch_assoc()) {
         $notifications[] = $row;
     }
@@ -36,6 +36,7 @@ $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -64,14 +65,24 @@ $conn->close();
     </script>
     <style>
         @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
         }
+
         .animate-marquee {
             animation: marquee 30s linear infinite;
         }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+
 </head>
+
 <body class="font-montserrat">
     <nav class="sticky top-0 z-50 bg-navy py-3 px-6 shadow-lg">
         <div class="container mx-auto flex flex-wrap items-center justify-between">
@@ -112,21 +123,71 @@ $conn->close();
         </div>
     </nav>
 
-    <div id="carousel" class="relative h-[550px] overflow-hidden">
-        <!-- Carousel images will be inserted here by JavaScript -->
+    <!-- <div id="carousel" class="relative h-[550px] overflow-hidden">
         <button id="prevBtn" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full">
             <i class="fas fa-chevron-left"></i>
         </button>
         <button id="nextBtn" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full">
             <i class="fas fa-chevron-right"></i>
         </button>
+    </div> -->
+
+
+    <div id="default-carousel" class="relative w-full" data-carousel="slide">
+        <div style="height: 500px;" class="relative h-[650px] overflow-hidden md:h-96">
+            <!-- Item 1 -->
+            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                <img src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+            </div>
+            <!-- Item 2 -->
+            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                <img src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+            </div>
+            <!-- Item 3 -->
+            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                <img src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+            </div>
+            <!-- Item 4 -->
+            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                <img src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+            </div>
+            <!-- Item 5 -->
+            <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                <img src="https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+            </div>
+        </div>
+        <!-- Slider indicators -->
+        <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+            <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide 1" data-carousel-slide-to="0"></button>
+            <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 2" data-carousel-slide-to="1"></button>
+            <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 3" data-carousel-slide-to="2"></button>
+            <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 4" data-carousel-slide-to="3"></button>
+            <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 5" data-carousel-slide-to="4"></button>
+        </div>
+        <!-- Slider controls -->
+        <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
+                </svg>
+                <span class="sr-only">Previous</span>
+            </span>
+        </button>
+        <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
+                </svg>
+                <span class="sr-only">Next</span>
+            </span>
+        </button>
     </div>
 
-    <div class="bg-[#EAE0C8] py-4 overflow-hidden">
+    <div style="border-top: 2px solid #DDDDDD;margin:10px;border-radius:10px;" class="bg-[#EEEEEE] py-2 overflow-hidden">
         <div class="animate-marquee whitespace-nowrap inline-block">
-            <span class="text-lg md:text-xl lg:text-2xl text-[#B22222] mx-4">Welcome to Our Community</span>
-            <span class="text-lg md:text-xl lg:text-2xl text-[#B22222] mx-4">Discover Opportunities</span>
-            <span class="text-lg md:text-xl lg:text-2xl text-[#B22222] mx-4">Connect with Alumni and Students</span>
+            <span class="text-lg md:text-xl lg:text-2xl text-[#B22222] mx-4">Welcome to Our Community &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</span>
+            <span class="text-lg md:text-xl lg:text-2xl text-[#B22222] mx-4">Discover Opportunities &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</span>
+            <span class="text-lg md:text-xl lg:text-2xl text-[#B22222] mx-4">Connect with Alumni and Students &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</span>
         </div>
     </div>
 
@@ -199,7 +260,7 @@ $conn->close();
 
                 <div>
                     <h6 class="text-lg font-bold mb-4 text-primary">Contact</h6>
-                <p class="mb-2"><i class="fas fa-home mr-2"></i><a href="https://maps.app.goo.gl/wWHJG7H3w6JL9xUZ7" target="_blank" class="hover:text-primary transition duration-300">Pharmaceutical Society, Dibrugarh University, Dibrugarh, Assam 786004</a></p>
+                    <p class="mb-2"><i class="fas fa-home mr-2"></i><a href="https://maps.app.goo.gl/wWHJG7H3w6JL9xUZ7" target="_blank" class="hover:text-primary transition duration-300">Pharmaceutical Society, Dibrugarh University, Dibrugarh, Assam 786004</a></p>
                     <p><i class="fas fa-envelope mr-2"></i><a href="mailto:pharmsociety@dibru.ac.in" class="hover:text-primary transition duration-300">pharmsociety@dibru.ac.in</a></p>
                 </div>
             </div>
@@ -217,65 +278,8 @@ $conn->close();
             document.getElementById('navbar-menu').classList.toggle('hidden');
         });
 
-        // Carousel functionality
-        const carousel = document.getElementById('carousel');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const images = [
-            'https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            'https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            'https://images.unsplash.com/photo-1731176497854-f9ea4dd52eb6?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-        ];
-        let currentIndex = 0;
+        
 
-        function createCarouselItem(src, index) {
-            const div = document.createElement('div');
-            div.className = `absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${index === 0 ? 'opacity-100' : 'opacity-0'}`;
-            div.style.backgroundImage = `url(${src})`;
-            div.style.backgroundSize = 'cover';
-            div.style.backgroundPosition = 'center';
-
-            const content = document.createElement('div');
-            content.className = 'absolute inset-x-[15%] bottom-5 text-center text-white';
-            content.innerHTML = `
-                <h1 class="text-4xl font-bold mb-4 text-shadow">Welcome <?php echo htmlspecialchars($user_name) ?>!</h1>
-                <p class="text-xl mb-24 text-shadow">Pharmaceutical Society, Dibrugarh University</p>
-            `;
-            div.appendChild(content);
-            return div;
-        }
-
-        images.forEach((src, index) => {
-            carousel.appendChild(createCarouselItem(src, index));
-        });
-
-        function showImage(index) {
-            const items = carousel.children;
-            for (let i = 0; i < items.length; i++) {
-                if (i === index) {
-                    items[i].classList.remove('opacity-0');
-                    items[i].classList.add('opacity-100');
-                } else {
-                    items[i].classList.remove('opacity-100');
-                    items[i].classList.add('opacity-0');
-                }
-            }
-        }
-
-        function showNextImage() {
-            currentIndex = (currentIndex + 1) % images.length;
-            showImage(currentIndex);
-        }
-
-        function showPrevImage() {
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            showImage(currentIndex);
-        }
-
-        nextBtn.addEventListener('click', showNextImage);
-        prevBtn.addEventListener('click', showPrevImage);
-
-        setInterval(showNextImage, 3000);
         // Directly use the PHP variable for notifications
         const notifications = <?php echo json_encode($notifications) ?>
 
@@ -317,4 +321,5 @@ $conn->close();
         });
     </script>
 </body>
+
 </html>
