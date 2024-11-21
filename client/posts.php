@@ -1,9 +1,24 @@
 <?php
 session_start();
-if (!isset($_SESSION['email'])) {
+include('includes/db_connect.php');
+if(!isset($_SESSION['email'])) {
   $redirect_url = 'login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']);
   header("Location: $redirect_url");
   exit();
+}
+$user_name = '';
+if(isset($_SESSION['email'])) {
+    $user_email = $_SESSION['email'];
+    $stmt = $conn->prepare("SELECT user_name FROM `signup-users` WHERE user_email = ?");
+    $stmt->bind_param("s", $user_email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = $result->fetch_assoc();
+        $user_name = $row['user_name'];
+    }
+    $stmt->close();
 }
 ?>
 
@@ -193,32 +208,39 @@ if (!isset($_SESSION['email'])) {
 
 
     function renderPosts(items) {
-      if (items.length === 0) {
-        postsContent.innerHTML = `
-            <div class="text-center text-gray-500 p-5">
-                <p>No ${activeTab === 'alumni' ? 'posts' : 'queries'} available</p>
-            </div>
-        `;
-        return;
-      }
-
-      postsContent.innerHTML = items.map(item => `
-        <div class="bg-white rounded-lg shadow-md p-5 mb-5">
-            <div class="flex items-center text-sm text-gray-600">
-                <strong>${item.author}</strong>
-                <span class="ml-2 text-gray-400">${new Date(item.timestamp).toLocaleString()}</span>
-            </div>
-            <h4 class="text-xl font-semibold my-2 text-gray-800">${item.title}</h4>
-            <p class="text-gray-700">${item.content}</p>
-            <div class="flex gap-2 mt-3">
-                <button class="edit-button bg-yellow-500 text-white px-4 py-2 rounded text-sm" data-id="${item.id}">Edit</button>
-                <button class="delete-button bg-red-500 text-white px-4 py-2 rounded text-sm" data-id="${item.id}">Delete</button>
-            </div>
+  if (items.length === 0) {
+    postsContent.innerHTML = `
+        <div class="text-center text-gray-500 p-5">
+            <p>No ${activeTab === 'alumni' ? 'posts' : 'queries'} available</p>
         </div>
-    `).join('');
+    `;
+    return;
+  }
 
-      addListeners();
-    }
+  // Embed the PHP variable as a JavaScript string
+  const userEmail = "<?php echo addslashes($user_email); ?>"; // Escape quotes if necessary
+
+  postsContent.innerHTML = items.map(item => `
+    <div class="bg-white rounded-lg shadow-md p-5 mb-5">
+        <div class="flex items-center text-sm text-gray-600">
+            <strong>${item.author}&nbsp;</strong>
+            <strong>(${item.email})</strong>
+            <span class="ml-2 text-gray-400">${new Date(item.timestamp).toLocaleString()}</span>
+        </div>
+        <h4 class="text-xl font-semibold my-2 text-gray-800">${item.title}</h4>
+        <p class="text-gray-700">${item.content}</p>
+        
+        <div class="flex gap-2 mt-3">
+          ${item.email === userEmail ? `
+            <button class="edit-button bg-yellow-500 text-white px-4 py-2 rounded text-sm" data-id="${item.id}">Edit</button>
+            <button class="delete-button bg-red-500 text-white px-4 py-2 rounded text-sm" data-id="${item.id}">Delete</button>
+          ` : ''}
+        </div>
+    </div>
+  `).join('');
+
+  addListeners();
+}
 
 
     function addListeners() {

@@ -230,9 +230,10 @@ json_encode($data);
         })
           .then(response => response.text())
           .then(data => {
-            console.log(data);
+            toastr.error("Student Deleted!");
             students = students.filter(student => student.id !== id);
             updateContent();
+            fetchStudentData();
           })
           .catch(error => console.error("Error deleting student:", error));
       }
@@ -240,17 +241,7 @@ json_encode($data);
 
     fetchStudentData();
 
-    let posts = [
-      { id: 1, title: "First Blog Post", author: "John Doe", dateCreated: "2023-05-01" },
-      { id: 2, title: "Upcoming Events", author: "Jane Smith", dateCreated: "2023-05-05" },
-      { id: 3, title: "New Product Announcement", author: "Bob Johnson", dateCreated: "2023-05-10" },
-    ];
 
-    let queries = [
-      { id: 1, title: "Admission Query", author: "Prospective Student", dateCreated: "2023-05-15" },
-      { id: 2, title: "Course Information", author: "Current Student", dateCreated: "2023-05-18" },
-      { id: 3, title: "Alumni Event", author: "Alumni Member", dateCreated: "2023-05-20" },
-    ];
 
     let notifications = [];
     let alumni = [];
@@ -274,10 +265,10 @@ json_encode($data);
         })
           .then(response => response.text())
           .then(data => {
-            console.log(data);
+            toastr.error("Alumni Deleted!");
             alumni = alumni.filter(item => item.id !== id);
+            fetchAlumniData();
             updateContent();
-            location.reload();
           })
           .catch(error => console.error("Error deleting alumni:", error));
       }
@@ -331,9 +322,9 @@ json_encode($data);
         .then(data => {
           if (data.status === 'success') {
             toastr.success(data.message); // Display success message
-            // Optionally, refresh the table or update UI dynamically
+            fetchAlumniData();
           } else {
-            toastr.success(data.message); // Display success message
+            toastr.error(data.message); // Display error message
           }
         })
         .catch(error => console.error('Error:', error));
@@ -349,9 +340,9 @@ json_encode($data);
         .then(data => {
           if (data.status === 'success') {
             toastr.success(data.message); // Display success message
-            // Optionally, refresh the table or update UI dynamically
+            fetchAlumniData();
           } else {
-            toastr.success(data.message); // Display success message
+            toastr.error(data.message); // Display error message
           }
         })
         .catch(error => console.error('Error:', error));
@@ -719,10 +710,9 @@ function renderTable(data, columns, deleteFunction, validateFunction) {
           if (data.status === "success") {
             const postsData = data.data.filter((item) => item.type === "post");
             const queriesData = data.data.filter((item) => item.type === "query");
-            console.log("Posts data:", postsData);
-            console.log("Queries data:", queriesData);
             renderPosts(postsData);
             renderQueries(queriesData);
+            console.log(queriesData);
           } else {
             console.error("Error fetching posts and queries:", data.message);
           }
@@ -741,7 +731,7 @@ function renderTable(data, columns, deleteFunction, validateFunction) {
         <td class="p-3">${new Date(post.timestamp).toLocaleDateString()}</td>
         <td class="p-3">
           <button class="text-green-500 hover:text-green-700" onclick="toggleValidation(${post.id}, 'post')">
-            ${post.is_validated ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>'}
+            ${(post.is_validated === "1" ? '<i class="fa fa-times"></i>' : '<i class="fa fa-check"></i>')}
           </button>
           <button class="text-red-500 hover:text-red-700" onclick="deletePostOrQuery(${post.id}, 'post')">
             <i class="fas fa-trash"></i>
@@ -763,7 +753,7 @@ function renderTable(data, columns, deleteFunction, validateFunction) {
         <td class="p-3">${new Date(query.timestamp).toLocaleDateString()}</td>
         <td class="p-3">
           <button class="text-green-500 hover:text-green-700" onclick="toggleValidation(${query.id}, 'query')">
-            ${query.is_validated ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>'}
+          ${(query.is_validated === "1" ? '<i class="fa fa-times"></i>' : '<i class="fa fa-check"></i>')}
           </button>
           <button class="text-red-500 hover:text-red-700" onclick="deletePostOrQuery(${query.id}, 'query')">
             <i class="fas fa-trash"></i>
@@ -783,6 +773,7 @@ function renderTable(data, columns, deleteFunction, validateFunction) {
         .then(response => response.json())
         .then(data => {
           if (data.status === 'success') {
+            toastr.success(`${type} validated successfully!`)
             // Fetch and reload posts and queries after validation update
             fetchPostsAndQueries();
           } else {
@@ -797,20 +788,25 @@ function renderTable(data, columns, deleteFunction, validateFunction) {
         fetch("fetch_posts_and_queries.php", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `id=${id}&type=${type}`,
+          body: `id=${id}&type=${type}&action=delete`, // Include the 'action' parameter
         })
           .then((response) => response.json())
           .then((data) => {
             if (data.status === "success") {
               alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully.`);
-              fetchPostsAndQueries();
+              fetchPostsAndQueries(); // Refresh the posts and queries list
             } else {
+              alert(`Failed to delete ${type}: ${data.message}`);
               console.error("Error:", data.message);
             }
           })
-          .catch((error) => console.error("Error:", error));
+          .catch((error) => {
+            alert(`An error occurred while deleting the ${type}.`);
+            console.error("Error:", error);
+          });
       }
     }
+
 
 
     document.addEventListener("DOMContentLoaded", () => {
